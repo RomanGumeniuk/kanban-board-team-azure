@@ -8,4 +8,4 @@ function Notes() {
   );
 }
 
-export default MyComponent;
+export default Notes;

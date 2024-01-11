@@ -1,18 +1,16 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
-import Notes from './Notes.js'
+import Notes from './Notes.jsx'
 import './App.css'
 
 function App() {
-  <div>
-  <Notes />
-</div>
   const [count, setCount] = useState(0)
 
   return (
     <>
       <div>
+        <Notes />
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
@@ -36,4 +34,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
