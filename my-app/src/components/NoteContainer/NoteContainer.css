@@ -1,17 +1,21 @@
 .note-container {
   display: flex;
-  flex-direction: column; /* Zmiana na kolumnowy układ */
-  align-items: center; /* Opcjonalne: centralizuje elementy w poziomie */
+  flex-direction: column;
   padding: 20px;
+  align-items: center;
+  width: 25%; /* Dzieli szerokość na cztery kolumny (4 kontenery) */
+  float: left;
+  box-sizing: border-box;
 }
 
 .notes-box {
   border: 2px solid #ddd;
-  padding: 10px;
+  
   border-radius: 8px;
-  width: 30%;
+  
   box-sizing: border-box;
   margin-bottom: 10px; /* Dodano odstęp między notes-box */
+  
 }
 
 .add-note-button {
