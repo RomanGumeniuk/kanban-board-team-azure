@@ -1,14 +1,21 @@
-import * as React from 'react';
-import { ChakraProvider } from '@chakra-ui/react'
-import ReactDOM from 'react-dom';
-import App from './App.tsx';
-import './index.css';
+import {StrictMode} from 'react';
+import {createRoot} from 'react-dom/client';
 
-ReactDOM.render(
-  <React.StrictMode>
+import App from './App';
+import { ChakraProvider } from '@chakra-ui/react';
+
+// 👇️ IMPORTANT: use correct ID of your root element
+// this is the ID of the div in your index.html file
+const rootElement = document.getElementById('main-div');
+
+// 👇️ if you use TypeScript, add non-null (!) assertion operator
+const root = createRoot(rootElement!);
+
+root.render(
+  
+  <StrictMode>
     <ChakraProvider>
     <App />
     </ChakraProvider>
-  </React.StrictMode>,
-  document.getElementById('root')
+  </StrictMode>,
 );
