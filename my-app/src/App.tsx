@@ -1,28 +1,40 @@
-import React from 'react';
-import './App.css'; // Styl ogólny dla całej aplikacji
-import { ChakraProvider } from '@chakra-ui/react'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Banner from './components/Banner/Banner';
-import Notes from './AddNotes.jsx';
-import NoteContainer from './components/NoteContainer/NoteContainer';
+import React from "react";
+import "./App.css"; // Styl ogólny dla całej aplikacji
+import { Container, Heading } from "@chakra-ui/react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import DarkModeIconButton from "./components/DarkMode/DarkModeIcon.tsx";
+import Banner from "./components/Banner/Banner";
+import Notes from "./AddNotes.jsx";
+import NoteContainer from "./components/NoteContainer/NoteContainer";
 
 const App: React.FC = () => (
-  <ChakraProvider>
-    <Router>
-      <Routes>
-        <Route path="/notes" element={<Notes />} />
-        <Route path="/" element={
+  <Router>
+    <Routes>
+      <Route path="/notes" element={<Notes />} />
+      <Route
+        path="/"
+        element={
           <div id="main-div">
-            <Banner />
+            <Heading
+              fontSize={{ base: "4xl", sm: "5xl", md: "7xl" }}
+              fontWeight="bold"
+              textAlign="center"
+              bgGradient="linear(to-l, #0D2137,  #00FF7F)"
+              bgClip="text"
+              mt={2}
+            >
+              Kanban Board
+            </Heading>
+            <DarkModeIconButton position="absolute" top={0} right={2} />
             <NoteContainer title="To Do" />
             <NoteContainer title="In Progress" />
-            <NoteContainer title="For Review"/>
+            <NoteContainer title="For Review" />
             <NoteContainer title="Done" />
           </div>
-        }/>
-      </Routes>
-    </Router>
-  </ChakraProvider>
+        }
+      />
+    </Routes>
+  </Router>
 );
 
 export default App;
