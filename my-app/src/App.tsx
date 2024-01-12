@@ -1,13 +1,15 @@
 
 // /src/App.tsx
-import React from 'react';
+import * as React from 'react'
 import './App.css'; // Styl ogólny dla całej aplikacji
+import { ChakraProvider } from '@chakra-ui/react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Banner from './components/Banner/Banner';
 import Notes from './AddNotes.jsx';
 import NoteContainer from './components/NoteContainer/NoteContainer';
 
 const App: React.FC = () => (
+  <ChakraProvider>
   <div id="main-div">
     <Banner />
     <NoteContainer title="To Do" />
@@ -22,6 +24,7 @@ const App: React.FC = () => (
       </Routes>
     </Router>
   </div>
+  </ChakraProvider>
 );
 
 export default App;
