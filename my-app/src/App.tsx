@@ -9,6 +9,7 @@ const App: React.FC = () => (
     <Banner />
     <NoteContainer title="To Do" />
     <NoteContainer title="In Progress" />
+    <NoteContainer title="For Review"/>
     <NoteContainer title="Done" />
   </div>
 );
