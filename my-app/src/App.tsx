@@ -7,32 +7,22 @@ import Notes from './AddNotes.jsx';
 import NoteContainer from './components/NoteContainer/NoteContainer';
 
 const App: React.FC = () => (
-
   <ChakraProvider>
-  <div id="main-div">
-    <Banner />
-    <NoteContainer title="To Do" />
-    <NoteContainer title="In Progress" />
-    <NoteContainer title="For Review"/>
-    <NoteContainer title="Done" />
-    //przykładowe dla testu ddziałania
-     <Router>
-    <Routes>
-      <Route path="/notes" element={<Notes />} />
-      <Route path="/" element={
-        <div id="main-div">
-          <Banner />
-          <NoteContainer title="To Do" />
-          <NoteContainer title="In Progress" />
-          <NoteContainer title="For Review"/>
-          <NoteContainer title="Done" />
-        </div>
-      }/>
-    </Routes>
-  </Router>
-  </div>
+    <Router>
+      <Routes>
+        <Route path="/notes" element={<Notes />} />
+        <Route path="/" element={
+          <div id="main-div">
+            <Banner />
+            <NoteContainer title="To Do" />
+            <NoteContainer title="In Progress" />
+            <NoteContainer title="For Review"/>
+            <NoteContainer title="Done" />
+          </div>
+        }/>
+      </Routes>
+    </Router>
   </ChakraProvider>
-
 );
 
 export default App;
