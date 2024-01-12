@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './AddNotes.css';
 import axios from 'axios'; // biblioteka do wysyłania żądań HTTP
 
 function Notes() {
