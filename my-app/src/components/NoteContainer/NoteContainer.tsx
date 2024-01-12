@@ -7,24 +7,27 @@ interface NoteContainerProps {
   title: string;
 }
 
+let globalNoteId = 0; // Licznik globalny dla identyfikatorów notatek
+
 const NoteContainer: React.FC<NoteContainerProps> = ({ title }) => {
   const [notes, setNotes] = useState([]);
 
   const addNote = () => {
     if (notes.length < 5) {
       const newNote = {
-        id: notes.length + 1,
-   //     color: getRandomColor(),
-        title: `New Task ${notes.length + 1}`,
+        id: ++globalNoteId, // Zwiększ identyfikator notatki przy dodawaniu nowej
+        title: `New Task ${globalNoteId}`,
       };
 
-      console.log('New Note:', newNote); // Dodaj console.log tutaj
+      console.log('New Note:', newNote);
 
       setNotes([...notes, newNote]);
     } else {
       alert('You can add a maximum of 5 notes.');
     }
   };
+
+  
 
   const deleteNote = (id: number) => {
     const updatedNotes = notes.filter((note) => note.id !== id);
@@ -38,9 +41,9 @@ const NoteContainer: React.FC<NoteContainerProps> = ({ title }) => {
         {notes.map((note) => (
           <Note key={note.id} note={note} onDelete={() => deleteNote(note.id)} />
         ))}
-        
+
         <button className="add-note-button" onClick={addNote}>
-          Add new note +
+          Add new Task +
         </button>
       </div>
     </div>
