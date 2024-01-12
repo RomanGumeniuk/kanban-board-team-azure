@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css'; // Styl ogólny dla całej aplikacji
+import './App.css'; 
 import { ChakraProvider } from '@chakra-ui/react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Banner from './components/Banner/Banner';
@@ -25,4 +25,4 @@ const App: React.FC = () => (
   </ChakraProvider>
 );
 
-export default App;
+export default App; 
