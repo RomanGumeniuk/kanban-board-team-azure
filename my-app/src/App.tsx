@@ -1,7 +1,6 @@
-
-import Notes from './Notes.jsx'
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import './App.css'
+import Notes from './Notes.jsx'; // lub './Notes.tsx' jeśli używasz TypeScript
 
 function App() {
   return (
