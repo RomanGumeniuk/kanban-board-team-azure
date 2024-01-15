@@ -27,10 +27,22 @@ const App: React.FC = () => (
               Kanban Board
               <DarkModeIconButton position="absolute" top={0} right={2} />
             </Heading>
-            <NoteContainer title="To Do" />
+            {/* <NoteContainer title="To Do" />
             <NoteContainer title="In Progress" />
             <NoteContainer title="For Review" />
-            <NoteContainer title="Done" />
+            <NoteContainer title="Done" /> */}
+
+            <Container maxWidth={"container.lg"} px={4} py={10}>
+              <SimpleGrid
+                columns={{ base: 1, md: 4 }}
+                spacing={{ base: 16, md: 4 }}
+              >
+                <Column column={ColumnType.TO_DO} />
+                <Column column={ColumnType.IN_PROGRESS} />
+                <Column column={ColumnType.FOR_REVIEW} />
+                <Column column={ColumnType.COMPLETED} />
+              </SimpleGrid>
+            </Container>
           </div>
         }
       />
