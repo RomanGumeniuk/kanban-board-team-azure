@@ -15,10 +15,10 @@ function Task({ index, task }: TaskProps) {
       position="relative"
       rounded="lg"
       w={200}
-      pl={3}
-      pr={7}
+      pl={8}
+      pr={8}
       pt={3}
-      pb={1}
+      pb={5}
       boxShadow="xl"
       cursor="pointer"
       bgColor={task.color}
@@ -27,7 +27,7 @@ function Task({ index, task }: TaskProps) {
         position="absolute"
         top={0}
         right={0}
-        zIndex={100}
+        zIndex={200}
         aria-label="delete-task"
         size="md"
         colorScheme="solid"
@@ -39,7 +39,6 @@ function Task({ index, task }: TaskProps) {
         }}
       />
       <Textarea
-        value={task.title}
         fontWeight="semibold"
         cursor="inherit"
         border="none"
@@ -47,8 +46,6 @@ function Task({ index, task }: TaskProps) {
         resize="none"
         minH={70}
         maxH={200}
-        focusBorderColor="none"
-        color="gray.700"
       />
     </Box>
   );
