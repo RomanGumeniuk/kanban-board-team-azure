@@ -21,15 +21,21 @@ const ColumnColorScheme: Record<ColumnType, string> = {
 const mockTasks: TaskModel[] = [
   {
     id: "1",
-    title: "Task 1",
+    title: "Ugotować pierogi",
     column: ColumnType.TO_DO,
-    color: "blue.300",
+    color: "blue.200",
   },
   {
     id: "2",
-    title: "Task 2",
+    title: "Zjeść pierogi (smakuwa)",
     column: ColumnType.TO_DO,
-    color: "green.300",
+    color: "green.100",
+  },
+  {
+    id: "3",
+    title: "Spalić pierogi ćwicząc💪",
+    column: ColumnType.TO_DO,
+    color: "red.100",
   },
 ];
 function Column({ column }: { column: ColumnType }) {
@@ -51,9 +57,9 @@ function Column({ column }: { column: ColumnType }) {
       <IconButton
         size="xs"
         w="full"
-        color={useColorModeValue("gray.500", "gray.400")}
+        color={useColorModeValue("gray.600", "gray.500")}
         bgColor={useColorModeValue("gray.100", "gray.700")}
-        _hover={{ bgColor: useColorModeValue("gray.200", "gray.600") }}
+        _hover={{ bgColor: useColorModeValue("gray.300", "gray.600") }}
         py={2}
         variant="solid"
         colorScheme="black"

@@ -17,7 +17,7 @@ const App: React.FC = () => (
         element={
           <div id="main-div">
             <Heading
-              fontSize={{ base: "4xl", sm: "5xl", md: "6xl" }}
+              fontSize={{ base: "4xl", sm: "5xl", md: "8xl" }}
               fontWeight="bold"
               textAlign="center"
               bgGradient="linear(to-l, #0D2137,  #00FF7F)"

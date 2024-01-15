@@ -20,7 +20,8 @@ function Task({ index, task }: TaskProps) {
       pt={3}
       pb={1}
       boxShadow="xl"
-      cursor="grab"
+      cursor="pointer"
+      bgColor={task.color}
     >
       <IconButton
         position="absolute"
