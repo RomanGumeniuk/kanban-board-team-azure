@@ -1,8 +1,7 @@
 /* /src/App.css */
+@import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");
 body {
   margin: 0;
   padding: 0;
-  font-family: var(--font-family-text,'Charlie Text',sans-serif);
-  
-  
+  font-family: "Oswald", sans-serif;
 }
