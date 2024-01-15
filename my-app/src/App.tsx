@@ -1,3 +1,4 @@
+
 import React from "react";
 import "./App.css"; // Styl ogólny dla całej aplikacji
 import { Container, Heading } from "@chakra-ui/react";
@@ -38,3 +39,4 @@ const App: React.FC = () => (
 );
 
 export default App;
+
