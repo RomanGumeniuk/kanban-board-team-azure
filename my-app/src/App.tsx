@@ -1,11 +1,12 @@
 import React from "react";
 import "./App.css"; // Styl ogólny dla całej aplikacji
-import { Container, Heading } from "@chakra-ui/react";
+import { Container, Heading, SimpleGrid } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import DarkModeIconButton from "./components/DarkMode/DarkModeIcon.tsx";
-import Banner from "./components/Banner/Banner";
 import Notes from "./AddNotes.jsx";
 import NoteContainer from "./components/NoteContainer/NoteContainer";
+import { ColumnType } from "./utils/enums.ts";
+import Column from "./components/Column/Column.tsx";
 
 const App: React.FC = () => (
   <Router>
@@ -24,8 +25,8 @@ const App: React.FC = () => (
               mt={2}
             >
               Kanban Board
+              <DarkModeIconButton position="absolute" top={0} right={2} />
             </Heading>
-            <DarkModeIconButton position="absolute" top={0} right={2} />
             <NoteContainer title="To Do" />
             <NoteContainer title="In Progress" />
             <NoteContainer title="For Review" />
