@@ -3,7 +3,7 @@ import "./App.css"; // Styl ogólny dla całej aplikacji
 import { Container, Heading, SimpleGrid } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import DarkModeIconButton from "./components/DarkMode/DarkModeIcon.tsx";
-import Notes from "./AddNotes.jsx";
+import Notes from "./AddNotes.tsx";
 import { ColumnType } from "./utils/enums.ts";
 import Column from "./components/Column/Column.tsx";
 
