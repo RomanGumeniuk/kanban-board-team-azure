@@ -24,7 +24,7 @@ const App: React.FC = () => (
               bgClip="text"
               mt={2}
             >
-              Krap Kanban Board
+              KRAP Kanban Board 
               <DarkModeIconButton position="absolute" top={0} right={2} />
             </Heading>
             {/* <NoteContainer title="To Do" />
