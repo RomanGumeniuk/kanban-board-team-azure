@@ -4,7 +4,6 @@ import { Container, Heading, SimpleGrid } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import DarkModeIconButton from "./components/DarkMode/DarkModeIcon.tsx";
 import Notes from "./AddNotes.jsx";
-import NoteContainer from "./components/NoteContainer/NoteContainer";
 import { ColumnType } from "./utils/enums.ts";
 import Column from "./components/Column/Column.tsx";
 
@@ -24,17 +23,12 @@ const App: React.FC = () => (
               bgClip="text"
               mt={2}
             >
-              KRAP Kanban Board 
+              KRAP Kanban Board
               <DarkModeIconButton position="absolute" top={0} right={2} />
             </Heading>
-            {/* <NoteContainer title="To Do" />
-            <NoteContainer title="In Progress" />
-            <NoteContainer title="For Review" />
-            <NoteContainer title="Done" /> */}
-
             <Container maxWidth={"container.lg"} px={4} py={10}>
               <SimpleGrid
-                columns={{ base: 1, md: 4 }}
+                columns={{ base: 1, md: 4 }} //resize options for columns
                 spacing={{ base: 16, md: 4 }}
               >
                 <Column column={ColumnType.TO_DO} />
