@@ -10,7 +10,7 @@ import { ReactNode } from "react";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  children: ReactNode; // Add this line
+  children: ReactNode;
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
@@ -24,5 +24,3 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
     </ChakraModal>
   );
 };
-
-export default Modal;

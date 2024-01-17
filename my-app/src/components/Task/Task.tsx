@@ -11,7 +11,9 @@ import {
   ModalHeader,
   ModalOverlay,
   Textarea,
+  useColorModeValue,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { TaskModel } from "../../utils/models";
 
@@ -22,6 +24,21 @@ type TaskProps = {
 
 function Task({ index, task }: TaskProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
+
+  const handleDeleteConfirm = () => {
+    // handleDeleteButtonClick(task.id);
+    toast({
+      title: "Task deleted.",
+      description: "The task has been successfully deleted.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+      position: "bottom",
+    });
+    onClose();
+  };
+
   return (
     <Box
       as="div"
@@ -54,6 +71,7 @@ function Task({ index, task }: TaskProps) {
         onClick={onOpen}
       />
       <Textarea
+        color={useColorModeValue("gray.700", "gray.800")}
         fontWeight="semibold"
         cursor="inherit"
         border="none"
@@ -71,14 +89,17 @@ function Task({ index, task }: TaskProps) {
           <ModalBody>Are you sure you want to delete this task?</ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button colorScheme="blue" onClick={handleDeleteConfirm} mr={3}>
+              Confirm
+            </Button>
+            <Button variant={"ghost"} onClick={onClose}>
               Close
             </Button>
-            <Button variant="ghost">Confirm</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
     </Box>
   );
 }
+
 export default Task;
