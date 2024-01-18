@@ -10,12 +10,14 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Textarea,
+  Text,
   useColorModeValue,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { TaskModel } from "../../utils/models";
+import TaskDrawer from "./TaskDrawer";
+import { useRef, useState } from "react";
 
 type TaskProps = {
   index: number;
@@ -25,6 +27,8 @@ type TaskProps = {
 function Task({ index, task }: TaskProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const btnRef = useRef(null);
 
   const handleDeleteConfirm = () => {
     // handleDeleteButtonClick(task.id);
@@ -37,6 +41,10 @@ function Task({ index, task }: TaskProps) {
       position: "bottom",
     });
     onClose();
+  };
+
+  const handleEditButtonClick = () => {
+    setIsDrawerOpen(true);
   };
 
   return (
@@ -53,6 +61,7 @@ function Task({ index, task }: TaskProps) {
       boxShadow="xl"
       cursor="pointer"
       bgColor={task.color}
+      aria-label={`Task ${index + 1}`}
     >
       <IconButton
         position="absolute"
@@ -70,17 +79,14 @@ function Task({ index, task }: TaskProps) {
         }}
         onClick={onOpen}
       />
-      <Textarea
+      <Text
         color={useColorModeValue("gray.700", "gray.800")}
         fontWeight="semibold"
-        cursor="inherit"
-        border="none"
-        p={0}
-        resize="none"
-        minH={70}
-        maxH={200}
-        value={task.title}
-      />
+        minH="70px"
+        maxH="200px"
+      >
+        {task.title}
+      </Text>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -98,6 +104,15 @@ function Task({ index, task }: TaskProps) {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Button ref={btnRef} onClick={handleEditButtonClick}>
+        Edit Task
+      </Button>
+
+      <TaskDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        task={task}
+      />
     </Box>
   );
 }

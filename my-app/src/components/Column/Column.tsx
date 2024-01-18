@@ -20,6 +20,8 @@ import {
   ModalFooter,
   Spacer,
   Flex,
+  useBreakpointValue,
+  StackDirection,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ColumnType } from "../../utils/enums";
@@ -27,6 +29,8 @@ import Task from "../Task/Task";
 import { TaskModel } from "../../utils/models";
 import axios from "axios";
 import React from "react";
+import SimpleBar from "simplebar-react";
+import "simplebar/dist/simplebar.min.css";
 
 const ColumnColorScheme: Record<ColumnType, string> = {
   Todo: "gray",
@@ -64,6 +68,12 @@ const mockTasks: TaskModel[] = [
     column: ColumnType.TO_DO,
     color: "blue.300",
   },
+  {
+    id: "4",
+    title: "Umyj się",
+    column: ColumnType.IN_PROGRESS,
+    color: "gray.400",
+  },
 ];
 
 function Column({ column }: { column: ColumnType }) {
@@ -75,9 +85,14 @@ function Column({ column }: { column: ColumnType }) {
     <Task key={task.id} task={task} index={index} />
   ));
 
+  const stackDirection = useBreakpointValue({
+    base: "row",
+    md: "column",
+  }) as StackDirection;
+
   return (
     <Box>
-      <Heading fontSize="md" mb={5} letterSpacing="ultrawide">
+      <Heading fontSize="md" mb={5} letterSpacing="wide">
         <Badge
           px={2}
           py={1}
@@ -88,6 +103,7 @@ function Column({ column }: { column: ColumnType }) {
         </Badge>
       </Heading>
       <IconButton
+        mb={4}
         onClick={() => setIsOpen(true)}
         size="xs"
         w="full"
@@ -100,19 +116,24 @@ function Column({ column }: { column: ColumnType }) {
         aria-label="add-task"
         icon={<AddIcon />}
       />
-      <Stack
-        direction={{ base: "row", md: "column" }}
-        h={{ base: 400, md: 600 }}
-        p={4}
-        mt={2}
-        spacing={4}
-        bgColor={useColorModeValue("gray.200", "gray.700")}
+      <Box
         rounded="lg"
         boxShadow="md"
-        overflow="auto"
+        overflow="hidden" // hide overflow to respect border radius
+        bgColor={useColorModeValue("gray.200", "gray.700")}
+        pr={stackDirection === "row" ? 2 : 0}
       >
-        {ColumnTasks}
-      </Stack>
+        <SimpleBar style={{ maxHeight: 500 }}>
+          <Stack
+            direction={stackDirection}
+            p={4}
+            spacing={4}
+            alignItems={"center"}
+          >
+            {ColumnTasks}
+          </Stack>
+        </SimpleBar>
+      </Box>
       <Modal
         // initialFocusRef={initialRef}
         isOpen={isOpen}
@@ -162,3 +183,13 @@ function Column({ column }: { column: ColumnType }) {
 }
 
 export default Column;
+function toast(arg0: {
+  title: string;
+  description: string;
+  status: string;
+  duration: number;
+  isClosable: boolean;
+  position: string;
+}) {
+  throw new Error("Function not implemented.");
+}
