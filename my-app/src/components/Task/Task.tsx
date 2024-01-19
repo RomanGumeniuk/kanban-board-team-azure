@@ -11,6 +11,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useBreakpointValue,
   useColorModeValue,
   useDisclosure,
   useToast,
@@ -29,6 +30,8 @@ function Task({ index, task }: TaskProps) {
   const toast = useToast();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const btnRef = useRef(null);
+
+  const shouldShowDeleteIcon = useBreakpointValue({ base: true, md: false });
 
   const handleDeleteConfirm = () => {
     // handleDeleteButtonClick(task.id);
@@ -73,14 +76,14 @@ function Task({ index, task }: TaskProps) {
         colorScheme="solid"
         color={"gray.700"}
         icon={<DeleteIcon />}
-        opacity={0}
+        opacity={shouldShowDeleteIcon ? 1 : 0}
         _groupHover={{
-          opacity: 1,
+          opacity: shouldShowDeleteIcon ? 1 : undefined,
         }}
         onClick={onOpen}
       />
       <Text
-        color={useColorModeValue("gray.700", "gray.800")}
+        color={useColorModeValue("gray.800", "gray.50")}
         fontWeight="semibold"
         minH="70px"
         maxH="200px"
@@ -104,7 +107,7 @@ function Task({ index, task }: TaskProps) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Button ref={btnRef} onClick={handleEditButtonClick}>
+      <Button size={"xs"} ref={btnRef} onClick={handleEditButtonClick}>
         Edit Task
       </Button>
 

@@ -8,7 +8,11 @@ import {
   DrawerContent,
   DrawerCloseButton,
   Input,
-  useToast, // import the useToast hook
+  Textarea,
+  useToast,
+  Heading,
+  VStack,
+  Box, // import the Box component
 } from "@chakra-ui/react";
 
 import { TaskModel } from "../../utils/models";
@@ -20,13 +24,12 @@ type TaskDrawerProps = {
 };
 
 function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
-  const toast = useToast(); // call the useToast hook
+  const toast = useToast();
 
   const handleSaveConfirm = () => {
-    // handleDeleteButtonClick(task.id);
     toast({
       title: "Task has been edited sucessfully!",
-      description: `You edited task ${task.title}!`,
+      description: `You edited task number: ${task.id}!`,
       status: "success",
       duration: 5000,
       isClosable: true,
@@ -40,16 +43,30 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader>Edit Task</DrawerHeader>
+        <DrawerHeader>Edit Task number: {task.id}</DrawerHeader>
 
         <DrawerBody>
-          <Input
-            placeholder="Task title"
-            defaultValue={task.title}
-            size={"lg"}
-            variant={"filled"}
-          />
-          {/* Add more inputs as needed */}
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <VStack align="stretch" spacing={5} w="100%" maxW="85%">
+              <Heading size="md">Title</Heading>
+              <Input
+                placeholder="Task title"
+                defaultValue={task.title}
+                size={"lg"}
+                variant={"filled"}
+              />
+
+              <Heading size="md">Description</Heading>
+              <Textarea
+                placeholder="Task description"
+                defaultValue={task.description}
+                size={"lg"}
+                variant={"filled"}
+                minHeight="150px"
+                maxHeight={"600px"}
+              />
+            </VStack>
+          </Box>
         </DrawerBody>
 
         <DrawerFooter>
@@ -57,8 +74,6 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
             Cancel
           </Button>
           <Button colorScheme="blue" onClick={handleSaveConfirm}>
-            {" "}
-            {/* add the onClick handler */}
             Save
           </Button>
         </DrawerFooter>

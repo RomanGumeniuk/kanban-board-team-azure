@@ -1,8 +1,11 @@
 import { ColumnType } from "./enums";
 
 export interface TaskModel {
-  id: string;
+  id: number;
   title: string;
-  column: ColumnType;
+  description: string;
   color: string;
+  column: ColumnType;
+  created_at: string;
+  updated_at: string;
 }
