@@ -121,7 +121,6 @@ function Column({ column }: { column: ColumnType }) {
         boxShadow="md"
         overflow="hidden" // hide overflow to respect border radius
         bgColor={useColorModeValue("gray.200", "gray.700")}
-        pr={stackDirection === "row" ? 2 : 0}
       >
         <SimpleBar style={{ maxHeight: 500 }}>
           <Stack
