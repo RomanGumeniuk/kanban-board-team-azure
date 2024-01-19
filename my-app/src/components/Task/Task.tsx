@@ -1,4 +1,4 @@
-import { DeleteIcon } from "@chakra-ui/icons";
+import { DeleteIcon, InfoIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -11,6 +11,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  Tooltip,
   useBreakpointValue,
   useColorModeValue,
   useDisclosure,
@@ -82,6 +83,23 @@ function Task({ index, task }: TaskProps) {
         }}
         onClick={onOpen}
       />
+      <Tooltip
+        label={`Created: ${task.created_at}\nUpdated: ${task.updated_at}`}
+        placement="top"
+        hasArrow
+      >
+        <IconButton
+          position="absolute"
+          top={0}
+          left={0}
+          zIndex={200}
+          aria-label="info-task"
+          size="md"
+          colorScheme="solid"
+          color={"gray.700"}
+          icon={<InfoIcon />}
+        />
+      </Tooltip>
       <Text
         color={useColorModeValue("gray.800", "gray.50")}
         fontWeight="semibold"

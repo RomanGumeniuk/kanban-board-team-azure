@@ -9,13 +9,17 @@ import {
   DrawerCloseButton,
   Input,
   Textarea,
+  Text,
   useToast,
   Heading,
   VStack,
-  Box, // import the Box component
+  Box,
+  Flex,
 } from "@chakra-ui/react";
 
 import { TaskModel } from "../../utils/models";
+import { useState } from "react";
+import ColorCircle from "./Circle";
 
 type TaskDrawerProps = {
   isOpen: boolean;
@@ -25,6 +29,19 @@ type TaskDrawerProps = {
 
 function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
   const toast = useToast();
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string>("gray");
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file.name);
+    }
+  };
+
+  const handleColorSelect = (color: string) => {
+    setSelectedColor(color);
+  };
 
   const handleSaveConfirm = () => {
     toast({
@@ -55,6 +72,47 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
                 size={"lg"}
                 variant={"filled"}
               />
+
+              <Heading size="md">Color</Heading>
+              <Flex>
+                <ColorCircle
+                  color="green"
+                  selectedColor={selectedColor}
+                  onSelect={handleColorSelect}
+                />
+                <ColorCircle
+                  color="blue"
+                  selectedColor={selectedColor}
+                  onSelect={handleColorSelect}
+                />
+                <ColorCircle
+                  color="red"
+                  selectedColor={selectedColor}
+                  onSelect={handleColorSelect}
+                />
+                <ColorCircle
+                  color="gray"
+                  selectedColor={selectedColor}
+                  onSelect={handleColorSelect}
+                />
+              </Flex>
+
+              <Heading size="md">Image</Heading>
+              <Box>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  id="file-upload"
+                  style={{ display: "none" }}
+                  onChange={handleFileChange}
+                />
+                <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
+                  <Button as="span">Upload Image</Button>
+                </label>
+                {selectedFile && (
+                  <Text mt={2}>Selected file: {selectedFile}</Text>
+                )}
+              </Box>
 
               <Heading size="md">Description</Heading>
               <Textarea
