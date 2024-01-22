@@ -1,5 +1,4 @@
 import { DeleteIcon, InfoIcon } from "@chakra-ui/icons";
-import mockData from "../../data/mockData.json";
 import {
   Box,
   Button,
@@ -90,7 +89,7 @@ function Task({ index, task }: TaskProps) {
         icon={<DeleteIcon />}
         opacity={shouldShowDeleteIcon ? 1 : 0}
         _groupHover={{
-          opacity: shouldShowDeleteIcon ? 1 : undefined,
+          opacity: shouldShowDeleteIcon ? 1 : 1,
         }}
         onClick={onOpen}
       />
@@ -110,13 +109,13 @@ function Task({ index, task }: TaskProps) {
           left={0}
           zIndex={200}
           aria-label="info-task"
-          size="md"
+          size="xs"
           colorScheme="solid"
           color={"gray.700"}
           icon={<InfoIcon />}
           opacity={shouldShowDeleteIcon ? 1 : 0}
           _groupHover={{
-            opacity: shouldShowDeleteIcon ? 1 : undefined,
+            opacity: shouldShowDeleteIcon ? 1 : 1,
           }}
         />
       </Tooltip>
@@ -145,8 +144,13 @@ function Task({ index, task }: TaskProps) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Button size={"xs"} ref={btnRef} onClick={handleEditButtonClick}>
-        Edit Task
+      <Button
+        size={"xs"}
+        ref={btnRef}
+        onClick={handleEditButtonClick}
+        variant={"solid"}
+      >
+        Edit
       </Button>
 
       <TaskDrawer

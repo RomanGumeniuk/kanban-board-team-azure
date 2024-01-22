@@ -16,11 +16,9 @@ import {
   FormControl,
   FormLabel,
   Input,
-  ButtonGroup,
   Button,
   useBreakpointValue,
   StackDirection,
-  HStack,
   VStack,
   Radio,
   RadioGroup, // import the HStack component
@@ -161,14 +159,14 @@ function Column({ column }: { column: ColumnType }) {
           <VStack alignItems="center">
             <RadioGroup onChange={setValue} value={value}>
               <Stack direction="row">
-                <Radio value="1" colorScheme="blue">
+                <Radio value="1" colorScheme="gray">
                   To do
                 </Radio>
                 <Radio value="2" colorScheme="yellow">
-                  For review
-                </Radio>
-                <Radio value="3" colorScheme="purple">
                   In progress
+                </Radio>
+                <Radio value="3" colorScheme="blue">
+                  For review
                 </Radio>
                 <Radio value="4" colorScheme="green">
                   Completed
