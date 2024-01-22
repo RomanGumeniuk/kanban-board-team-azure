@@ -1,4 +1,4 @@
-import { Circle } from "@chakra-ui/react";
+import { Circle as ChakraCircle } from "@chakra-ui/react";
 
 type ColorCircleProps = {
   color: string;
@@ -7,7 +7,7 @@ type ColorCircleProps = {
 };
 
 const ColorCircle = ({ color, selectedColor, onSelect }: ColorCircleProps) => (
-  <Circle
+  <ChakraCircle
     size="50px"
     bg={`${color}.500`}
     mr={2}

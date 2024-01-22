@@ -51,6 +51,9 @@ function Column({ column }: { column: ColumnType }) {
     md: "column",
   }) as StackDirection;
 
+  //Zmiana koloru scrolla
+  const simpleBarColor = useColorModeValue("lightColor", "darkColor");
+
   const handleAddTaskConfirm = () => {
     toast({
       title: "Task Added.",
@@ -136,7 +139,12 @@ function Column({ column }: { column: ColumnType }) {
         overflow="hidden" // hide overflow to respect border radius
         bgColor={useColorModeValue("gray.200", "gray.700")}
       >
-        <SimpleBar style={{ maxHeight: 600 }}>
+        <SimpleBar
+          style={{
+            maxHeight: 600,
+            scrollbarColor: `${simpleBarColor} transparent`,
+          }}
+        >
           <Stack
             direction={stackDirection}
             p={4}
@@ -147,7 +155,6 @@ function Column({ column }: { column: ColumnType }) {
           </Stack>
         </SimpleBar>
       </Box>
-      {/* ... existing code ... */}
       <Modal
         initialFocusRef={initialRef}
         isOpen={isOpen}

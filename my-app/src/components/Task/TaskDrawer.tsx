@@ -6,20 +6,27 @@ import {
   DrawerHeader,
   DrawerOverlay,
   DrawerContent,
-  DrawerCloseButton,
-  Input,
-  Textarea,
-  Text,
   useToast,
   Heading,
   VStack,
   Box,
   Flex,
+  Editable,
+  EditableInput,
+  EditablePreview,
+  EditableTextarea,
+  IconButton,
+  ButtonGroup,
+  useEditableControls,
+  DrawerCloseButton,
+  Text,
+  Input,
 } from "@chakra-ui/react";
+import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
 
 import { TaskModel } from "../../utils/models";
 import { useState } from "react";
-import ColorCircle from "./Circle";
+import Circle from "./Circle";
 
 type TaskDrawerProps = {
   isOpen: boolean;
@@ -55,6 +62,40 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
     onClose();
   };
 
+  /* Here's a custom control */
+  function EditableControls() {
+    const {
+      isEditing,
+      getSubmitButtonProps,
+      getCancelButtonProps,
+      getEditButtonProps,
+    } = useEditableControls();
+
+    return isEditing ? (
+      <ButtonGroup justifyContent="center" size="sm">
+        <IconButton
+          aria-label="submit"
+          icon={<CheckIcon />}
+          {...getSubmitButtonProps()}
+        />
+        <IconButton
+          aria-label="submit"
+          icon={<CloseIcon />}
+          {...getCancelButtonProps()}
+        />
+      </ButtonGroup>
+    ) : (
+      <Flex justifyContent="center">
+        <IconButton
+          aria-label="submit"
+          size="sm"
+          icon={<EditIcon />}
+          {...getEditButtonProps()}
+        />
+      </Flex>
+    );
+  }
+
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose} size={"xl"}>
       <DrawerOverlay />
@@ -69,31 +110,36 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
           <Box display="flex" flexDirection="column" alignItems="center">
             <VStack align="stretch" spacing={5} w="100%" maxW="85%">
               <Heading size="md">Title</Heading>
-              <Input
-                placeholder="Task title"
+              <Editable
                 defaultValue={task.title}
-                size={"lg"}
-                variant={"filled"}
-              />
+                isPreviewFocusable={false}
+                submitOnBlur={false}
+              >
+                <Flex justifyContent="space-between" alignItems="center">
+                  <EditablePreview />
+                  <EditableControls />
+                </Flex>
+                <EditableInput autoFocus />
+              </Editable>
 
               <Heading size="md">Color</Heading>
               <Flex>
-                <ColorCircle
+                <Circle
                   color="green"
                   selectedColor={selectedColor}
                   onSelect={handleColorSelect}
                 />
-                <ColorCircle
+                <Circle
                   color="blue"
                   selectedColor={selectedColor}
                   onSelect={handleColorSelect}
                 />
-                <ColorCircle
+                <Circle
                   color="red"
                   selectedColor={selectedColor}
                   onSelect={handleColorSelect}
                 />
-                <ColorCircle
+                <Circle
                   color="gray"
                   selectedColor={selectedColor}
                   onSelect={handleColorSelect}
@@ -118,14 +164,22 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
               </Box>
 
               <Heading size="md">Description</Heading>
-              <Textarea
-                placeholder="Task description"
+              <Editable
                 defaultValue={task.description}
-                size={"lg"}
-                variant={"filled"}
-                minHeight="150px"
-                maxHeight={"600px"}
-              />
+                textAlign="start"
+                isPreviewFocusable={false}
+                submitOnBlur={false}
+              >
+                <Flex justifyContent="space-between" alignItems="center">
+                  <EditablePreview />
+                  <EditableControls />
+                </Flex>
+                <EditableTextarea
+                  minHeight="150px"
+                  maxHeight="600px"
+                  autoFocus
+                />
+              </Editable>
             </VStack>
           </Box>
         </DrawerBody>

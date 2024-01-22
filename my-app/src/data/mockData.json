@@ -79,7 +79,7 @@
       "color": "blue.400",
       "column": "FOR_REVIEW",
       "created_at": "2022-01-09T12:00:00Z",
-      "updated_at": "202-01-09T12:00:00Z"
+      "updated_at": "2023-01-09T12:00:00Z"
     },
     {
       "id": 10,
@@ -102,6 +102,24 @@
     {
       "id": 12,
       "title": "Plan na jutro",
+      "description": "Sporządzić plan na kolejny dzień.",
+      "color": "gray.400",
+      "column": "COMPLETED",
+      "created_at": "2022-01-12T12:00:00Z",
+      "updated_at": "2022-01-12T12:00:00Z"
+    },
+    {
+      "id": 13,
+      "title": "Plan na wczoraj",
+      "description": "Sporządzić plan na kolejny dzień.",
+      "color": "gray.400",
+      "column": "COMPLETED",
+      "created_at": "2022-01-12T12:00:00Z",
+      "updated_at": "2022-01-12T12:00:00Z"
+    },
+    {
+      "id": 14,
+      "title": "Plan na dzisiaj",
       "description": "Sporządzić plan na kolejny dzień.",
       "color": "gray.400",
       "column": "COMPLETED",
