@@ -1,4 +1,5 @@
 import { DeleteIcon, InfoIcon } from "@chakra-ui/icons";
+import mockData from "../../data/mockData.json";
 import {
   Box,
   Button,
@@ -20,6 +21,7 @@ import {
 import { TaskModel } from "../../utils/models";
 import TaskDrawer from "./TaskDrawer";
 import { useRef, useState } from "react";
+import { format } from "date-fns";
 
 type TaskProps = {
   index: number;
@@ -46,6 +48,15 @@ function Task({ index, task }: TaskProps) {
     });
     onClose();
   };
+
+  function formatDate(dateString: string) {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      // dateString is not a valid date
+      return "Invalid date";
+    }
+    return format(date, "do MMMM yyyy, h:mm aaaa");
+  }
 
   const handleEditButtonClick = () => {
     setIsDrawerOpen(true);
@@ -84,7 +95,12 @@ function Task({ index, task }: TaskProps) {
         onClick={onOpen}
       />
       <Tooltip
-        label={`Created: ${task.created_at}\nUpdated: ${task.updated_at}`}
+        label={
+          <Box>
+            <Text mb={2}>{`Created: ${formatDate(task.created_at)}`}</Text>
+            <Text>{`Updated: ${formatDate(task.updated_at)}`}</Text>
+          </Box>
+        }
         placement="top"
         hasArrow
       >

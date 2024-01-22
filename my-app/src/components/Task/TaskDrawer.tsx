@@ -60,7 +60,10 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader>Edit Task number: {task.id}</DrawerHeader>
+        <DrawerHeader>
+          Edit Task: {task.title} <br></br>
+          Id: {task.id}
+        </DrawerHeader>
 
         <DrawerBody>
           <Box display="flex" flexDirection="column" alignItems="center">

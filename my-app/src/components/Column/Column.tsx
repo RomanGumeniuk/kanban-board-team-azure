@@ -18,13 +18,12 @@ import {
   Input,
   ButtonGroup,
   Button,
-  ModalFooter,
-  Spacer,
-  Flex,
   useBreakpointValue,
   StackDirection,
   HStack,
-  VStack, // import the HStack component
+  VStack,
+  Radio,
+  RadioGroup, // import the HStack component
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ColumnType } from "../../utils/enums";
@@ -42,6 +41,7 @@ const ColumnColorScheme: Record<ColumnType, string> = {
 };
 
 function Column({ column }: { column: ColumnType }) {
+  const [value, setValue] = React.useState("1");
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
   const initialRef = React.useRef<HTMLInputElement | null>(null);
@@ -77,6 +77,21 @@ function Column({ column }: { column: ColumnType }) {
       return <Task key={mappedTask.id} task={mappedTask} index={index} />;
     });
 
+  function formatColumnType(columnType: ColumnType) {
+    switch (columnType) {
+      case ColumnType.TO_DO:
+        return "To do";
+      case ColumnType.IN_PROGRESS:
+        return "In progress";
+      case ColumnType.FOR_REVIEW:
+        return "For review";
+      case ColumnType.COMPLETED:
+        return "Completed";
+      default:
+        return columnType;
+    }
+  }
+
   return (
     <Box>
       <Heading fontSize="md" mb={5} letterSpacing="wide">
@@ -86,7 +101,7 @@ function Column({ column }: { column: ColumnType }) {
           rounded="lg"
           colorScheme={ColumnColorScheme[column]}
         >
-          {column}
+          {formatColumnType(column)}
         </Badge>
       </Heading>
       <IconButton
@@ -143,24 +158,36 @@ function Column({ column }: { column: ColumnType }) {
             </FormControl>
           </ModalBody>
 
-          <ModalFooter>
-            <VStack spacing={3}>
-              {" "}
-              {/* wrap the Buttons in a VStack */}
-              <Button colorScheme="blue" onClick={onClose}>
-                To do
-              </Button>
-              <Button colorScheme="yellow" onClick={onClose}>
-                For review
-              </Button>
-              <Button colorScheme="purple" onClick={onClose}>
-                In progress
-              </Button>
-              <Button colorScheme="green" onClick={onClose}>
-                Completed
-              </Button>
-            </VStack>
-          </ModalFooter>
+          <VStack alignItems="center">
+            <RadioGroup onChange={setValue} value={value}>
+              <Stack direction="row">
+                <Radio value="1" colorScheme="blue">
+                  To do
+                </Radio>
+                <Radio value="2" colorScheme="yellow">
+                  For review
+                </Radio>
+                <Radio value="3" colorScheme="purple">
+                  In progress
+                </Radio>
+                <Radio value="4" colorScheme="green">
+                  Completed
+                </Radio>
+              </Stack>
+            </RadioGroup>
+          </VStack>
+
+          <Button
+            w={"60%"}
+            mt={4}
+            alignSelf={"center"}
+            colorScheme="blue"
+            onClick={onClose}
+            variant={"solid"}
+            mb={0.5}
+          >
+            Save
+          </Button>
         </ModalContent>
       </Modal>
     </Box>
