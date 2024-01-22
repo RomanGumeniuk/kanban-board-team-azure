@@ -23,6 +23,8 @@ import {
   Radio,
   RadioGroup,
   useToast,
+  Textarea,
+  Flex,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ColumnType } from "../../utils/enums";
@@ -64,6 +66,12 @@ function Column({ column }: { column: ColumnType }) {
       position: "bottom",
     });
     onClose();
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && event.ctrlKey) {
+      handleAddTaskConfirm();
+    }
   };
 
   const ColumnTasks = mockData.tasks
@@ -163,50 +171,52 @@ function Column({ column }: { column: ColumnType }) {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add new task</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl>
-              <FormLabel>Title</FormLabel>
-              <Input placeholder="Title" ref={initialRef} />
-            </FormControl>
+          <form onKeyDown={handleKeyDown}>
+            <ModalHeader>Add new task</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
+              <FormControl>
+                <FormLabel>Title</FormLabel>
+                <Input placeholder="Title" ref={initialRef} />
+              </FormControl>
 
-            <FormControl mt={4}>
-              <FormLabel>Description</FormLabel>
-              <Input placeholder="Description" />
-            </FormControl>
-          </ModalBody>
+              <FormControl mt={4}>
+                <FormLabel>Description</FormLabel>
+                <Textarea h={90} maxH={100} placeholder="Description" />
+              </FormControl>
+            </ModalBody>
 
-          <VStack alignItems="center">
-            <RadioGroup onChange={setValue} value={value}>
-              <Stack direction="row">
-                <Radio value="1" colorScheme="gray">
-                  To do
-                </Radio>
-                <Radio value="2" colorScheme="yellow">
-                  In progress
-                </Radio>
-                <Radio value="3" colorScheme="blue">
-                  For review
-                </Radio>
-                <Radio value="4" colorScheme="green">
-                  Completed
-                </Radio>
-              </Stack>
-            </RadioGroup>
-          </VStack>
-
-          <Button
-            w={"60%"}
-            mt={4}
-            alignSelf={"center"}
-            colorScheme="blue"
-            onClick={handleAddTaskConfirm}
-            variant={"solid"}
-            mb={0.5}
-          >
-            Save
-          </Button>
+            <VStack alignItems="center">
+              <RadioGroup onChange={setValue} value={value}>
+                <Stack direction="row">
+                  <Radio value="1" colorScheme="gray">
+                    To do
+                  </Radio>
+                  <Radio value="2" colorScheme="yellow">
+                    In progress
+                  </Radio>
+                  <Radio value="3" colorScheme="blue">
+                    For review
+                  </Radio>
+                  <Radio value="4" colorScheme="green">
+                    Completed
+                  </Radio>
+                </Stack>
+              </RadioGroup>
+            </VStack>
+            <Flex justifyContent="center">
+              <Button
+                w={"40%"}
+                mt={4}
+                colorScheme="blue"
+                onClick={handleAddTaskConfirm}
+                variant={"solid"}
+                mb={0.5}
+              >
+                Save
+              </Button>
+            </Flex>
+          </form>
         </ModalContent>
       </Modal>
     </Box>

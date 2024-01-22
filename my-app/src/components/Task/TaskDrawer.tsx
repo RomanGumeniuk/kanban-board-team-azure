@@ -59,6 +59,7 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
       isClosable: true,
       position: "bottom",
     });
+
     onClose();
   };
 
@@ -79,7 +80,7 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
           {...getSubmitButtonProps()}
         />
         <IconButton
-          aria-label="submit"
+          aria-label="cancel"
           icon={<CloseIcon />}
           {...getCancelButtonProps()}
         />
@@ -87,7 +88,7 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
     ) : (
       <Flex justifyContent="center">
         <IconButton
-          aria-label="submit"
+          aria-label="Edit"
           size="sm"
           icon={<EditIcon />}
           {...getEditButtonProps()}
@@ -95,6 +96,12 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
       </Flex>
     );
   }
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && event.ctrlKey) {
+      handleSaveConfirm();
+    }
+  };
 
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose} size={"xl"}>
@@ -107,81 +114,83 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
         </DrawerHeader>
 
         <DrawerBody>
-          <Box display="flex" flexDirection="column" alignItems="center">
-            <VStack align="stretch" spacing={5} w="100%" maxW="85%">
-              <Heading size="md">Title</Heading>
-              <Editable
-                defaultValue={task.title}
-                isPreviewFocusable={false}
-                submitOnBlur={false}
-              >
-                <Flex justifyContent="space-between" alignItems="center">
-                  <EditablePreview />
-                  <EditableControls />
+          <form onKeyDown={handleKeyDown}>
+            <Box display="flex" flexDirection="column" alignItems="center">
+              <VStack align="stretch" spacing={5} w="100%" maxW="85%">
+                <Heading size="md">Title</Heading>
+                <Editable
+                  defaultValue={task.title}
+                  isPreviewFocusable={false}
+                  submitOnBlur={false}
+                >
+                  <Flex justifyContent="space-between" alignItems="center">
+                    <EditablePreview />
+                    <EditableControls />
+                  </Flex>
+                  <EditableInput autoFocus />
+                </Editable>
+
+                <Heading size="md">Color</Heading>
+                <Flex>
+                  <Circle
+                    color="green"
+                    selectedColor={selectedColor}
+                    onSelect={handleColorSelect}
+                  />
+                  <Circle
+                    color="blue"
+                    selectedColor={selectedColor}
+                    onSelect={handleColorSelect}
+                  />
+                  <Circle
+                    color="red"
+                    selectedColor={selectedColor}
+                    onSelect={handleColorSelect}
+                  />
+                  <Circle
+                    color="gray"
+                    selectedColor={selectedColor}
+                    onSelect={handleColorSelect}
+                  />
                 </Flex>
-                <EditableInput autoFocus />
-              </Editable>
 
-              <Heading size="md">Color</Heading>
-              <Flex>
-                <Circle
-                  color="green"
-                  selectedColor={selectedColor}
-                  onSelect={handleColorSelect}
-                />
-                <Circle
-                  color="blue"
-                  selectedColor={selectedColor}
-                  onSelect={handleColorSelect}
-                />
-                <Circle
-                  color="red"
-                  selectedColor={selectedColor}
-                  onSelect={handleColorSelect}
-                />
-                <Circle
-                  color="gray"
-                  selectedColor={selectedColor}
-                  onSelect={handleColorSelect}
-                />
-              </Flex>
+                <Heading size="md">Image</Heading>
+                <Box>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    id="file-upload"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
+                    <Button as="span">Upload Image</Button>
+                  </label>
+                  {selectedFile && (
+                    <Text mt={2}>Selected file: {selectedFile}</Text>
+                  )}
+                </Box>
 
-              <Heading size="md">Image</Heading>
-              <Box>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  id="file-upload"
-                  style={{ display: "none" }}
-                  onChange={handleFileChange}
-                />
-                <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
-                  <Button as="span">Upload Image</Button>
-                </label>
-                {selectedFile && (
-                  <Text mt={2}>Selected file: {selectedFile}</Text>
-                )}
-              </Box>
-
-              <Heading size="md">Description</Heading>
-              <Editable
-                defaultValue={task.description}
-                textAlign="start"
-                isPreviewFocusable={false}
-                submitOnBlur={false}
-              >
-                <Flex justifyContent="space-between" alignItems="center">
-                  <EditablePreview />
-                  <EditableControls />
-                </Flex>
-                <EditableTextarea
-                  minHeight="150px"
-                  maxHeight="600px"
-                  autoFocus
-                />
-              </Editable>
-            </VStack>
-          </Box>
+                <Heading size="md">Description</Heading>
+                <Editable
+                  defaultValue={task.description}
+                  textAlign="start"
+                  isPreviewFocusable={false}
+                  submitOnBlur={false}
+                >
+                  <Flex justifyContent="space-between" alignItems="center">
+                    <EditablePreview />
+                    <EditableControls />
+                  </Flex>
+                  <EditableTextarea
+                    minHeight="150px"
+                    maxHeight="600px"
+                    autoFocus
+                  />
+                </Editable>
+              </VStack>
+            </Box>
+          </form>
         </DrawerBody>
 
         <DrawerFooter>
