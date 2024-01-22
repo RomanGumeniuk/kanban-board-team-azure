@@ -132,27 +132,35 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
 
                 <Heading size="md">Color</Heading>
                 <Flex>
-                  <Circle
-                    color="green"
-                    selectedColor={selectedColor}
-                    onSelect={handleColorSelect}
-                  />
-                  <Circle
-                    color="blue"
-                    selectedColor={selectedColor}
-                    onSelect={handleColorSelect}
-                  />
-                  <Circle
-                    color="red"
-                    selectedColor={selectedColor}
-                    onSelect={handleColorSelect}
-                  />
-                  <Circle
-                    color="gray"
-                    selectedColor={selectedColor}
-                    onSelect={handleColorSelect}
-                  />
-                </Flex>
+  <Box width="25%" p={2}>
+    <Circle
+      color="green"
+      selectedColor={selectedColor}
+      onSelect={handleColorSelect}
+    />
+  </Box>
+  <Box width="25%" p={2}>
+    <Circle
+      color="blue"
+      selectedColor={selectedColor}
+      onSelect={handleColorSelect}
+    />
+  </Box>
+  <Box width="25%" p={2}>
+    <Circle
+      color="red"
+      selectedColor={selectedColor}
+      onSelect={handleColorSelect}
+    />
+  </Box>
+  <Box width="25%" p={2}>
+    <Circle
+      color="gray"
+      selectedColor={selectedColor}
+      onSelect={handleColorSelect}
+    />
+  </Box>
+</Flex>
 
                 <Heading size="md">Image</Heading>
                 <Box>
