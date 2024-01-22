@@ -21,7 +21,8 @@ import {
   StackDirection,
   VStack,
   Radio,
-  RadioGroup, // import the HStack component
+  RadioGroup,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ColumnType } from "../../utils/enums";
@@ -39,6 +40,7 @@ const ColumnColorScheme: Record<ColumnType, string> = {
 };
 
 function Column({ column }: { column: ColumnType }) {
+  const toast = useToast();
   const [value, setValue] = React.useState("1");
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
@@ -48,6 +50,18 @@ function Column({ column }: { column: ColumnType }) {
     base: "row",
     md: "column",
   }) as StackDirection;
+
+  const handleAddTaskConfirm = () => {
+    toast({
+      title: "Task Added.",
+      description: "The task has been successfully created.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+      position: "bottom",
+    });
+    onClose();
+  };
 
   const ColumnTasks = mockData.tasks
     .filter((task) => task.column === column)
@@ -180,7 +194,7 @@ function Column({ column }: { column: ColumnType }) {
             mt={4}
             alignSelf={"center"}
             colorScheme="blue"
-            onClick={onClose}
+            onClick={handleAddTaskConfirm}
             variant={"solid"}
             mb={0.5}
           >
