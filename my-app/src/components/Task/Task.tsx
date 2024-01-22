@@ -98,6 +98,10 @@ function Task({ index, task }: TaskProps) {
           colorScheme="solid"
           color={"gray.700"}
           icon={<InfoIcon />}
+          opacity={shouldShowDeleteIcon ? 1 : 0}
+          _groupHover={{
+            opacity: shouldShowDeleteIcon ? 1 : undefined,
+          }}
         />
       </Tooltip>
       <Text

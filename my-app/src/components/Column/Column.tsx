@@ -23,12 +23,13 @@ import {
   Flex,
   useBreakpointValue,
   StackDirection,
+  HStack,
+  VStack, // import the HStack component
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ColumnType } from "../../utils/enums";
 import Task from "../Task/Task";
 import { TaskModel } from "../../utils/models";
-// import axios from "axios";
 import React from "react";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
@@ -39,16 +40,6 @@ const ColumnColorScheme: Record<ColumnType, string> = {
   FOR_REVIEW: "blue",
   COMPLETED: "green",
 };
-
-// async function AddTaskRequest() {
-//   try {
-//     const response = await axios.get("https://your-azure-function-url");
-//     console.log(response.data);
-//   } catch (error) {
-//     console.error("Error calling Azure Function:", error);
-//     return 0;
-//   }
-// }
 
 function Column({ column }: { column: ColumnType }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -129,7 +120,13 @@ function Column({ column }: { column: ColumnType }) {
           </Stack>
         </SimpleBar>
       </Box>
-      <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
+      {/* ... existing code ... */}
+      <Modal
+        initialFocusRef={initialRef}
+        isOpen={isOpen}
+        onClose={onClose}
+        size="xl"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Add new task</ModalHeader>
@@ -147,25 +144,22 @@ function Column({ column }: { column: ColumnType }) {
           </ModalBody>
 
           <ModalFooter>
-            <Flex>
-              <ButtonGroup size="sm" isAttached variant="outline">
-                <Button colorScheme="blue" onClick={onClose}>
-                  To do
-                </Button>
-                <Button colorScheme="yellow" onClick={onClose}>
-                  For review
-                </Button>
-              </ButtonGroup>
-              <Spacer />
-              <ButtonGroup size="sm" isAttached variant="outline">
-                <Button colorScheme="purple" onClick={onClose}>
-                  In progress
-                </Button>
-                <Button colorScheme="green" onClick={onClose}>
-                  Completed
-                </Button>
-              </ButtonGroup>
-            </Flex>
+            <VStack spacing={3}>
+              {" "}
+              {/* wrap the Buttons in a VStack */}
+              <Button colorScheme="blue" onClick={onClose}>
+                To do
+              </Button>
+              <Button colorScheme="yellow" onClick={onClose}>
+                For review
+              </Button>
+              <Button colorScheme="purple" onClick={onClose}>
+                In progress
+              </Button>
+              <Button colorScheme="green" onClick={onClose}>
+                Completed
+              </Button>
+            </VStack>
           </ModalFooter>
         </ModalContent>
       </Modal>
