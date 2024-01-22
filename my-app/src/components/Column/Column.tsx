@@ -1,4 +1,5 @@
 import { AddIcon } from "@chakra-ui/icons";
+import mockData from "../../data/mockData.json";
 import {
   Badge,
   Box,
@@ -17,78 +18,79 @@ import {
   Input,
   ButtonGroup,
   Button,
-  ModalFooter,
-  Spacer,
-  Flex,
   useBreakpointValue,
   StackDirection,
+  HStack,
+  VStack,
+  Radio,
+  RadioGroup, // import the HStack component
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ColumnType } from "../../utils/enums";
 import Task from "../Task/Task";
 import { TaskModel } from "../../utils/models";
-import axios from "axios";
 import React from "react";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 
 const ColumnColorScheme: Record<ColumnType, string> = {
-  Todo: "gray",
-  "In Progress": "yellow",
-  "For Review": "blue",
-  Completed: "green",
+  TO_DO: "gray",
+  IN_PROGRESS: "yellow",
+  FOR_REVIEW: "blue",
+  COMPLETED: "green",
 };
 
-async function AddTaskRequest() {
-  try {
-    const response = await axios.get("https://your-azure-function-url");
-    console.log(response.data);
-  } catch (error) {
-    console.error("Error calling Azure Function:", error);
-    return 0;
-  }
-}
-
-const mockTasks: TaskModel[] = [
-  {
-    id: "1",
-    title: "Ugotować pierogi",
-    column: ColumnType.TO_DO,
-    color: "red.300",
-  },
-  {
-    id: "2",
-    title: "Zjeść pierogi (smakuwa)",
-    column: ColumnType.TO_DO,
-    color: "green.300",
-  },
-  {
-    id: "3",
-    title: "Spalić pierogi ćwicząc💪",
-    column: ColumnType.TO_DO,
-    color: "blue.300",
-  },
-  {
-    id: "4",
-    title: "Umyj się",
-    column: ColumnType.IN_PROGRESS,
-    color: "gray.400",
-  },
-];
-
 function Column({ column }: { column: ColumnType }) {
+  const [value, setValue] = React.useState("1");
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
-  const initialRef = React.useRef();
-
-  const ColumnTasks = mockTasks.map((task, index) => (
-    <Task key={task.id} task={task} index={index} />
-  ));
+  const initialRef = React.useRef<HTMLInputElement | null>(null);
 
   const stackDirection = useBreakpointValue({
     base: "row",
     md: "column",
   }) as StackDirection;
+
+  const ColumnTasks = mockData.tasks
+    .filter((task) => task.column === column)
+    .map((task, index) => {
+      let column: ColumnType;
+      switch (task.column) {
+        case "TO_DO":
+          column = ColumnType.TO_DO;
+          break;
+        case "IN_PROGRESS":
+          column = ColumnType.IN_PROGRESS;
+          break;
+        case "FOR_REVIEW":
+          column = ColumnType.FOR_REVIEW;
+          break;
+        case "COMPLETED":
+          column = ColumnType.COMPLETED;
+          break;
+        default:
+          throw new Error(`Invalid column type: ${task.column}`);
+      }
+
+      const mappedTask: TaskModel = { ...task, column };
+
+      return <Task key={mappedTask.id} task={mappedTask} index={index} />;
+    });
+
+  function formatColumnType(columnType: ColumnType) {
+    switch (columnType) {
+      case ColumnType.TO_DO:
+        return "To do";
+      case ColumnType.IN_PROGRESS:
+        return "In progress";
+      case ColumnType.FOR_REVIEW:
+        return "For review";
+      case ColumnType.COMPLETED:
+        return "Completed";
+      default:
+        return columnType;
+    }
+  }
 
   return (
     <Box>
@@ -99,7 +101,7 @@ function Column({ column }: { column: ColumnType }) {
           rounded="lg"
           colorScheme={ColumnColorScheme[column]}
         >
-          {column}
+          {formatColumnType(column)}
         </Badge>
       </Heading>
       <IconButton
@@ -122,7 +124,7 @@ function Column({ column }: { column: ColumnType }) {
         overflow="hidden" // hide overflow to respect border radius
         bgColor={useColorModeValue("gray.200", "gray.700")}
       >
-        <SimpleBar style={{ maxHeight: 500 }}>
+        <SimpleBar style={{ maxHeight: 600 }}>
           <Stack
             direction={stackDirection}
             p={4}
@@ -133,10 +135,12 @@ function Column({ column }: { column: ColumnType }) {
           </Stack>
         </SimpleBar>
       </Box>
+      {/* ... existing code ... */}
       <Modal
-        // initialFocusRef={initialRef}
+        initialFocusRef={initialRef}
         isOpen={isOpen}
         onClose={onClose}
+        size="xl"
       >
         <ModalOverlay />
         <ModalContent>
@@ -145,7 +149,7 @@ function Column({ column }: { column: ColumnType }) {
           <ModalBody pb={6}>
             <FormControl>
               <FormLabel>Title</FormLabel>
-              <Input placeholder="Title" /> {/* ref={initialRef} */}
+              <Input placeholder="Title" ref={initialRef} />
             </FormControl>
 
             <FormControl mt={4}>
@@ -154,27 +158,36 @@ function Column({ column }: { column: ColumnType }) {
             </FormControl>
           </ModalBody>
 
-          <ModalFooter>
-            <Flex>
-              <ButtonGroup size="sm" isAttached variant="outline">
-                <Button colorScheme="blue" onClick={onClose}>
+          <VStack alignItems="center">
+            <RadioGroup onChange={setValue} value={value}>
+              <Stack direction="row">
+                <Radio value="1" colorScheme="blue">
                   To do
-                </Button>
-                <Button colorScheme="yellow" onClick={onClose}>
+                </Radio>
+                <Radio value="2" colorScheme="yellow">
                   For review
-                </Button>
-              </ButtonGroup>
-              <Spacer />
-              <ButtonGroup size="sm" isAttached variant="outline">
-                <Button colorScheme="purple" onClick={onClose}>
+                </Radio>
+                <Radio value="3" colorScheme="purple">
                   In progress
-                </Button>
-                <Button colorScheme="green" onClick={onClose}>
+                </Radio>
+                <Radio value="4" colorScheme="green">
                   Completed
-                </Button>
-              </ButtonGroup>
-            </Flex>
-          </ModalFooter>
+                </Radio>
+              </Stack>
+            </RadioGroup>
+          </VStack>
+
+          <Button
+            w={"60%"}
+            mt={4}
+            alignSelf={"center"}
+            colorScheme="blue"
+            onClick={onClose}
+            variant={"solid"}
+            mb={0.5}
+          >
+            Save
+          </Button>
         </ModalContent>
       </Modal>
     </Box>
@@ -182,13 +195,3 @@ function Column({ column }: { column: ColumnType }) {
 }
 
 export default Column;
-function toast(arg0: {
-  title: string;
-  description: string;
-  status: string;
-  duration: number;
-  isClosable: boolean;
-  position: string;
-}) {
-  throw new Error("Function not implemented.");
-}

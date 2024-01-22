@@ -1,4 +1,5 @@
-import { DeleteIcon } from "@chakra-ui/icons";
+import { DeleteIcon, InfoIcon } from "@chakra-ui/icons";
+import mockData from "../../data/mockData.json";
 import {
   Box,
   Button,
@@ -11,6 +12,8 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  Tooltip,
+  useBreakpointValue,
   useColorModeValue,
   useDisclosure,
   useToast,
@@ -18,6 +21,7 @@ import {
 import { TaskModel } from "../../utils/models";
 import TaskDrawer from "./TaskDrawer";
 import { useRef, useState } from "react";
+import { format } from "date-fns";
 
 type TaskProps = {
   index: number;
@@ -29,6 +33,8 @@ function Task({ index, task }: TaskProps) {
   const toast = useToast();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const btnRef = useRef(null);
+
+  const shouldShowDeleteIcon = useBreakpointValue({ base: true, md: false });
 
   const handleDeleteConfirm = () => {
     // handleDeleteButtonClick(task.id);
@@ -42,6 +48,15 @@ function Task({ index, task }: TaskProps) {
     });
     onClose();
   };
+
+  function formatDate(dateString: string) {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      // dateString is not a valid date
+      return "Invalid date";
+    }
+    return format(date, "do MMMM yyyy, h:mm aaaa");
+  }
 
   const handleEditButtonClick = () => {
     setIsDrawerOpen(true);
@@ -73,14 +88,40 @@ function Task({ index, task }: TaskProps) {
         colorScheme="solid"
         color={"gray.700"}
         icon={<DeleteIcon />}
-        opacity={0}
+        opacity={shouldShowDeleteIcon ? 1 : 0}
         _groupHover={{
-          opacity: 1,
+          opacity: shouldShowDeleteIcon ? 1 : undefined,
         }}
         onClick={onOpen}
       />
+      <Tooltip
+        label={
+          <Box>
+            <Text mb={2}>{`Created: ${formatDate(task.created_at)}`}</Text>
+            <Text>{`Updated: ${formatDate(task.updated_at)}`}</Text>
+          </Box>
+        }
+        placement="top"
+        hasArrow
+      >
+        <IconButton
+          position="absolute"
+          top={0}
+          left={0}
+          zIndex={200}
+          aria-label="info-task"
+          size="md"
+          colorScheme="solid"
+          color={"gray.700"}
+          icon={<InfoIcon />}
+          opacity={shouldShowDeleteIcon ? 1 : 0}
+          _groupHover={{
+            opacity: shouldShowDeleteIcon ? 1 : undefined,
+          }}
+        />
+      </Tooltip>
       <Text
-        color={useColorModeValue("gray.700", "gray.800")}
+        color={useColorModeValue("gray.800", "gray.50")}
         fontWeight="semibold"
         minH="70px"
         maxH="200px"
@@ -104,7 +145,7 @@ function Task({ index, task }: TaskProps) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Button ref={btnRef} onClick={handleEditButtonClick}>
+      <Button size={"xs"} ref={btnRef} onClick={handleEditButtonClick}>
         Edit Task
       </Button>
 
