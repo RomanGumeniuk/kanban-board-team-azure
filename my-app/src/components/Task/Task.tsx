@@ -125,12 +125,15 @@ function Task({ index, task }: TaskProps) {
         minH="70px"
         maxH="200px"
       >
+        <Text fontSize="xs" opacity="0.6">
+          #{task.id}
+        </Text>
         {task.title}
       </Text>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Delete Task</ModalHeader>
+          <ModalHeader>Delete Task {task.id}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>Are you sure you want to delete this task?</ModalBody>
 
