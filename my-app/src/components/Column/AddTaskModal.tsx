@@ -21,32 +21,66 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import ColorCircle from "../Task/Circle";
+import kanbanService from "../../services/KanbanService";
 
 type AddTaskModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  onTaskAdded: () => void;
 };
 
-const AddTaskModal = ({ isOpen, onClose }: AddTaskModalProps) => {
+const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
   const toast = useToast();
   const [value, setValue] = React.useState("1");
   const initialRef = React.useRef<HTMLInputElement | null>(null);
   const [selectedColor, setSelectedColor] = useState<string>("gray");
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
 
   const handleColorSelect = (color: string) => {
     setSelectedColor(color);
   };
 
   const handleAddTaskConfirm = () => {
-    toast({
-      title: "Task Added.",
-      description: "The task has been successfully created.",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-      position: "bottom",
-    });
-    onClose();
+    const taskData = {
+      title,
+      description,
+      color: selectedColor,
+      column: Number(value),
+    };
+
+    kanbanService
+      .createTask(taskData)
+      .then(() => {
+        toast({
+          title: "Task Added.",
+          description: "The task has been successfully created.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+
+        setTitle("");
+        setDescription("");
+        setSelectedColor("gray");
+        setValue("1");
+        setTimeout(() => {
+          onTaskAdded();
+        }, 2000);
+        onClose();
+      })
+      .catch((error: any) => {
+        console.error("Error:", error);
+        toast({
+          title: "Error",
+          description: "There was an error creating the task.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      });
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -70,12 +104,23 @@ const AddTaskModal = ({ isOpen, onClose }: AddTaskModalProps) => {
           <ModalBody pb={6}>
             <FormControl>
               <FormLabel>Title</FormLabel>
-              <Input placeholder="Title" ref={initialRef} />
+              <Input
+                placeholder="Title"
+                ref={initialRef}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Description</FormLabel>
-              <Textarea h={90} maxH={100} placeholder="Description" />
+              <Textarea
+                h={90}
+                maxH={100}
+                placeholder="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </FormControl>
 
             <FormControl mt={4}>

@@ -129,6 +129,23 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
                   </Flex>
                   <EditableInput autoFocus />
                 </Editable>
+                <Heading size="md">Description</Heading>
+                <Editable
+                  defaultValue={task.description}
+                  textAlign="start"
+                  isPreviewFocusable={false}
+                  submitOnBlur={false}
+                >
+                  <Flex justifyContent="space-between" alignItems="center">
+                    <EditablePreview />
+                    <EditableControls />
+                  </Flex>
+                  <EditableTextarea
+                    minHeight="150px"
+                    maxHeight="600px"
+                    autoFocus
+                  />
+                </Editable>
 
                 <Heading size="md">Color</Heading>
                 <Flex>
@@ -177,24 +194,6 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
                     <Text mt={2}>Selected file: {selectedFile}</Text>
                   )}
                 </Box>
-
-                <Heading size="md">Description</Heading>
-                <Editable
-                  defaultValue={task.description}
-                  textAlign="start"
-                  isPreviewFocusable={false}
-                  submitOnBlur={false}
-                >
-                  <Flex justifyContent="space-between" alignItems="center">
-                    <EditablePreview />
-                    <EditableControls />
-                  </Flex>
-                  <EditableTextarea
-                    minHeight="150px"
-                    maxHeight="600px"
-                    autoFocus
-                  />
-                </Editable>
               </VStack>
             </Box>
           </form>

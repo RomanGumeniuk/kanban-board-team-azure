@@ -52,12 +52,16 @@ function Column({ column }: { column: ColumnType }) {
     }
   }
 
-  useEffect(() => {
+  const fetchTasks = () => {
     kanbanService
       .showAllTasks()
       .then((response) => response.json())
       .then((data: TaskModel[]) => setTasks(data))
       .catch((error) => console.error("Error:", error));
+  };
+
+  useEffect(() => {
+    fetchTasks();
   }, []);
 
   const ColumnTasks = tasks
@@ -128,7 +132,11 @@ function Column({ column }: { column: ColumnType }) {
           </Stack>
         </SimpleBar>
       </Box>
-      <AddTaskModal isOpen={isOpen} onClose={onClose} />
+      <AddTaskModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onTaskAdded={fetchTasks}
+      />
     </Box>
   );
 }
