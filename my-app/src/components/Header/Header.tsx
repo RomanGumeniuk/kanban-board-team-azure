@@ -8,6 +8,7 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
+import DarkModeIconButton from "./DarkModeIcon";
 
 const Header: React.FC = () => {
   return (
@@ -33,7 +34,7 @@ const Header: React.FC = () => {
       >
         KRAP Kanban Board
       </Heading> */}
-
+      <DarkModeIconButton />
       <Avatar size="md" name="Oman pendal" src="path_to_user_image" />
     </Box>
   );

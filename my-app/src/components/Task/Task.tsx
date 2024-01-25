@@ -143,7 +143,7 @@ function Task({ index, task }: TaskProps) {
           }}
         />
       </Tooltip>
-      <Text
+      <Box
         color={useColorModeValue("gray.800", "gray.50")}
         fontWeight="semibold"
         minH="70px"
@@ -153,7 +153,7 @@ function Task({ index, task }: TaskProps) {
           #{task.id}
         </Text>
         {task.title}
-      </Text>
+      </Box>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
