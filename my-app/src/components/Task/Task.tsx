@@ -21,6 +21,7 @@ import { TaskModel } from "../../utils/models";
 import TaskDrawer from "./TaskDrawer";
 import { useRef, useState } from "react";
 import { format } from "date-fns";
+import kanbanService from "../../services/KanbanService";
 
 type TaskProps = {
   index: number;
@@ -35,19 +36,42 @@ function Task({ index, task }: TaskProps) {
 
   const shouldShowDeleteIcon = useBreakpointValue({ base: true, md: false });
 
-  const handleDeleteConfirm = () => {
-    // handleDeleteButtonClick(task.id);
-    toast({
-      title: "Task deleted.",
-      description: "The task has been successfully deleted.",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-      position: "bottom",
-    });
-    onClose();
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
+  const handleDeleteConfirm = () => {
+    setIsLoading(true); // Set isLoading to true when the delete operation starts
+    kanbanService
+      .deleteTask(task.id.toString())
+      .then(({ status }) => {
+        if (status === 200) {
+          toast({
+            title: "Task deleted.",
+            description: "The task has been successfully deleted.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom",
+          });
+        } else {
+          throw new Error("Failed to delete task");
+        }
+        onClose();
+      })
+      .catch((error: { message: any }) => {
+        console.error("Error:", error);
+        toast({
+          title: "Error",
+          description: `There is not task with that id in Database`,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
   function formatDate(dateString: string) {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
@@ -138,7 +162,12 @@ function Task({ index, task }: TaskProps) {
           <ModalBody>Are you sure you want to delete this task?</ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" onClick={handleDeleteConfirm} mr={3}>
+            <Button
+              colorScheme="blue"
+              onClick={handleDeleteConfirm}
+              mr={3}
+              isLoading={isLoading}
+            >
               Confirm
             </Button>
             <Button variant={"ghost"} onClick={onClose}>

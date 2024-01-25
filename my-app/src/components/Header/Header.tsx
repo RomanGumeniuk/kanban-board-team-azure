@@ -1,6 +1,5 @@
 import {
   Box,
-  Heading,
   IconButton,
   Avatar,
   Menu,
@@ -18,15 +17,6 @@ const Header: React.FC = () => {
       alignItems="center"
       p={4}
     >
-      <Heading
-        fontSize={{ base: "4xl", sm: "5xl", md: "4xl" }}
-        textAlign="left"
-        bgGradient="linear(to-b, #0D2137,  #00FF7F)"
-        bgClip="text"
-      >
-        KRAP Kanban Board
-      </Heading>
-
       <Menu>
         <MenuButton as={IconButton} icon={<HamburgerIcon />} />
         <MenuList>
@@ -35,8 +25,16 @@ const Header: React.FC = () => {
           <MenuItem>More Info</MenuItem>
         </MenuList>
       </Menu>
+      {/* <Heading
+        fontSize={{ base: "4xl", sm: "5xl", md: "4xl" }}
+        textAlign="left"
+        bgGradient="linear(to-b, #0D2137,  #00FF7F)"
+        bgClip="text"
+      >
+        KRAP Kanban Board
+      </Heading> */}
 
-      <Avatar size="md" name="User Name" src="path_to_user_image" />
+      <Avatar size="md" name="Oman pendal" src="path_to_user_image" />
     </Box>
   );
 };
