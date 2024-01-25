@@ -1,5 +1,4 @@
 import { AddIcon } from "@chakra-ui/icons";
-import mockData from "../../data/mockData.json";
 import {
   Badge,
   Box,
@@ -10,13 +9,14 @@ import {
   useBreakpointValue,
   StackDirection,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ColumnType } from "../../utils/enums";
 import Task from "../Task/Task";
 import { TaskModel } from "../../utils/models";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 import AddTaskModal from "./AddTaskModal";
+import kanbanService from "../../services/KanbanService";
 
 const ColumnColorScheme: Record<ColumnType, string> = {
   TO_DO: "gray",
@@ -28,38 +28,42 @@ const ColumnColorScheme: Record<ColumnType, string> = {
 function Column({ column }: { column: ColumnType }) {
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
+  const simpleBarColor = useColorModeValue("lightColor", "darkColor");
 
   const stackDirection = useBreakpointValue({
     base: "row",
     md: "column",
   }) as StackDirection;
 
-  //Zmiana koloru scrolla
-  const simpleBarColor = useColorModeValue("lightColor", "darkColor");
-  const ColumnTasks = mockData.tasks
-    .filter((task) => task.column === column)
+  const [tasks, setTasks] = useState<TaskModel[]>([]);
+
+  function mapColumnNumberToColumnType(columnNumber: number): ColumnType {
+    switch (columnNumber) {
+      case 1:
+        return ColumnType.TO_DO;
+      case 2:
+        return ColumnType.IN_PROGRESS;
+      case 3:
+        return ColumnType.FOR_REVIEW;
+      case 4:
+        return ColumnType.COMPLETED;
+      default:
+        throw new Error(`Invalid column number: ${columnNumber}`);
+    }
+  }
+
+  useEffect(() => {
+    kanbanService
+      .showAllTasks()
+      .then((response) => response.json())
+      .then((data: TaskModel[]) => setTasks(data))
+      .catch((error) => console.error("Error:", error));
+  }, []);
+
+  const ColumnTasks = tasks
+    .filter((task) => mapColumnNumberToColumnType(task.column) === column)
     .map((task, index) => {
-      let column: ColumnType;
-      switch (task.column) {
-        case "TO_DO":
-          column = ColumnType.TO_DO;
-          break;
-        case "IN_PROGRESS":
-          column = ColumnType.IN_PROGRESS;
-          break;
-        case "FOR_REVIEW":
-          column = ColumnType.FOR_REVIEW;
-          break;
-        case "COMPLETED":
-          column = ColumnType.COMPLETED;
-          break;
-        default:
-          throw new Error(`Invalid column type: ${task.column}`);
-      }
-
-      const mappedTask: TaskModel = { ...task, column };
-
-      return <Task key={mappedTask.id} task={mappedTask} index={index} />;
+      return <Task key={task.id} task={task} index={index} />;
     });
 
   function formatColumnType(columnType: ColumnType) {
@@ -76,7 +80,6 @@ function Column({ column }: { column: ColumnType }) {
         return columnType;
     }
   }
-
   return (
     <Box>
       <Heading fontSize="md" mb={5} letterSpacing="wide">

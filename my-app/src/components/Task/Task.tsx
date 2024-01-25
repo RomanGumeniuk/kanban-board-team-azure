@@ -38,6 +38,7 @@ function Task({ index, task }: TaskProps) {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  //OnclickIkonka delete
   const handleDeleteConfirm = () => {
     setIsLoading(true); // Set isLoading to true when the delete operation starts
     kanbanService
@@ -72,6 +73,8 @@ function Task({ index, task }: TaskProps) {
         setIsLoading(false);
       });
   };
+
+  //Formatowanie Daty
   function formatDate(dateString: string) {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
@@ -81,6 +84,7 @@ function Task({ index, task }: TaskProps) {
     return format(date, "do MMMM yyyy, h:mm aaaa");
   }
 
+  //Otwieranie EditDrawer
   const handleEditButtonClick = () => {
     setIsDrawerOpen(true);
   };

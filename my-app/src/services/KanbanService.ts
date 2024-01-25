@@ -15,14 +15,19 @@ class KanbanService {
   ) {
     const url = `${this.baseUrl}/${endpoint}`;
 
-    const response = await fetch(url, {
+    let options: RequestInit = {
       method,
       headers: {
         "Content-Type": "application/json",
         "x-functions-key": key,
       },
-      body: JSON.stringify(body),
-    });
+    };
+
+    if (method !== "GET") {
+      options.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(url, options);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
