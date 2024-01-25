@@ -78,7 +78,6 @@ function Task({ index, task }: TaskProps) {
   function formatDate(dateString: string) {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
-      // dateString is not a valid date
       return "Invalid date";
     }
     return format(date, "do MMMM yyyy, h:mm aaaa");

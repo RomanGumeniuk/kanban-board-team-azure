@@ -65,9 +65,7 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
         setDescription("");
         setSelectedColor("gray");
         setValue("1");
-        setTimeout(() => {
-          onTaskAdded();
-        }, 2000);
+        onTaskAdded();
         onClose();
       })
       .catch((error: any) => {
