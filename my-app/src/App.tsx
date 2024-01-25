@@ -6,8 +6,6 @@ import {
   ChakraProvider,
   extendTheme,
 } from "@chakra-ui/react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Notes from "./AddNotes.tsx";
 import { ColumnType } from "./utils/enums.ts";
 import Column from "./components/Column/Column.tsx";
 import Header from "./components/Header/Header.tsx";
@@ -23,31 +21,22 @@ const theme = extendTheme({
 
 const App: React.FC = () => (
   <ChakraProvider theme={theme}>
-    <Router>
-      <Routes>
-        <Route path="/notes" element={<Notes />} />
-        <Route
-          path="/"
-          element={
-            <div id="main-div">
-              <Header></Header>
-
-              <Container maxWidth={"container.lg"} px={4} py={10}>
-                <SimpleGrid
-                  columns={{ base: 1, md: 4 }} //resize options for columns
-                  spacing={{ base: 16, md: 5 }}
-                >
-                  <Column column={ColumnType.TO_DO} />
-                  <Column column={ColumnType.IN_PROGRESS} />
-                  <Column column={ColumnType.FOR_REVIEW} />
-                  <Column column={ColumnType.COMPLETED} />
-                </SimpleGrid>
-              </Container>
-            </div>
-          }
-        />
-      </Routes>
-    </Router>
+    {
+      <div id="main-div">
+        <Header></Header>
+        <Container maxWidth={"container.lg"} px={4} py={10}>
+          <SimpleGrid
+            columns={{ base: 1, md: 4 }} //resize options for columns
+            spacing={{ base: 16, md: 5 }}
+          >
+            <Column column={ColumnType.TO_DO} />
+            <Column column={ColumnType.IN_PROGRESS} />
+            <Column column={ColumnType.FOR_REVIEW} />
+            <Column column={ColumnType.COMPLETED} />
+          </SimpleGrid>
+        </Container>
+      </div>
+    }
   </ChakraProvider>
 );
 
