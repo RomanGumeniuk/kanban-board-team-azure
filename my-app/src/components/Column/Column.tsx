@@ -114,7 +114,7 @@ function Column({ column }: { column: ColumnType }) {
       >
         <SimpleBar
           style={{
-            maxHeight: 600,
+            height: 580,
             scrollbarColor: `${simpleBarColor} transparent`,
           }}
         >
