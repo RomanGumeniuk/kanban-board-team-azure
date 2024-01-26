@@ -156,6 +156,7 @@ function Column({
         isOpen={isOpen}
         onClose={onClose}
         onTaskAdded={fetchTasks}
+        column={column}
       />
     </Box>
   );

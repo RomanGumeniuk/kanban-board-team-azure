@@ -22,20 +22,34 @@ import {
 } from "@chakra-ui/react";
 import ColorCircle from "../Task/ColorCircle";
 import kanbanService from "../../services/KanbanService";
+import { ColumnType } from "../../utils/enums";
+import mapColumnTypeToRadioButtonValue from "../../utils/enums";
 
 type AddTaskModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onTaskAdded: () => void;
+  column: ColumnType;
 };
 
-const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
+const AddTaskModal = ({
+  isOpen,
+  onClose,
+  onTaskAdded,
+  column,
+}: AddTaskModalProps) => {
   const toast = useToast();
-  const [value, setValue] = React.useState("1");
   const initialRef = React.useRef<HTMLInputElement | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string>("gray");
+
+  const [selectedColor, setSelectedColor] = useState<string>("#99BC85");
+
   const [title, setTitle] = useState<string>("");
+
   const [description, setDescription] = useState<string>("");
+
+  const [value, setValue] = React.useState(
+    mapColumnTypeToRadioButtonValue(column)
+  );
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -130,28 +144,28 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
               <Flex>
                 <Box width="25%" p={2}>
                   <ColorCircle
-                    color="green"
+                    color="#99BC85"
                     selectedColor={selectedColor}
                     onSelect={handleColorSelect}
                   />
                 </Box>
                 <Box width="25%" p={2}>
                   <ColorCircle
-                    color="blue"
+                    color="#FF8080"
                     selectedColor={selectedColor}
                     onSelect={handleColorSelect}
                   />
                 </Box>
                 <Box width="25%" p={2}>
                   <ColorCircle
-                    color="red"
+                    color="#F6FDC3"
                     selectedColor={selectedColor}
                     onSelect={handleColorSelect}
                   />
                 </Box>
                 <Box width="25%" p={2}>
                   <ColorCircle
-                    color="gray"
+                    color="#CDFAD5"
                     selectedColor={selectedColor}
                     onSelect={handleColorSelect}
                   />

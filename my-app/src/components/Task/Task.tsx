@@ -76,7 +76,6 @@ function Task({ index, task, fetchTasks }: TaskProps) {
       });
   };
 
-  //Formatowanie Daty
   function formatDate(dateString: string) {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
@@ -85,7 +84,6 @@ function Task({ index, task, fetchTasks }: TaskProps) {
     return format(date, "do MMMM yyyy, h:mm aaaa");
   }
 
-  //Otwieranie EditDrawer
   const handleEditButtonClick = () => {
     setIsDrawerOpen(true);
   };

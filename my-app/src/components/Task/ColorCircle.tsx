@@ -9,7 +9,7 @@ type ColorCircleProps = {
 const ColorCircle = ({ color, selectedColor, onSelect }: ColorCircleProps) => (
   <ChakraCircle
     size="50px"
-    bg={`${color}.500`}
+    bg={color}
     mr={2}
     cursor="pointer"
     borderWidth={selectedColor === color ? "3px" : "0px"}
