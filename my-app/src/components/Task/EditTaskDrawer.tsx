@@ -30,6 +30,7 @@ import { TaskModel } from "../../utils/models";
 import { useState } from "react";
 import ColorCircle from "./ColorCircle";
 import React from "react";
+import kanbanService from "../../services/KanbanService";
 
 type TaskDrawerProps = {
   isOpen: boolean;
@@ -49,19 +50,45 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
   };
   const handleColorSelect = (color: string) => {
     setSelectedColor(color);
+    setColor(color);
   };
-  const handleSaveConfirm = () => {
-    toast({
-      title: "Task has been edited sucessfully!",
-      description: `You edited task number: ${task.id}!`,
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-      position: "bottom",
-    });
+  const handleSaveConfirm = async () => {
+    const taskData = {
+      title,
+      description,
+      color,
+      column,
+    };
+
+    try {
+      await kanbanService.updateTask(task.id.toString(), taskData);
+      toast({
+        title: "Task has been edited successfully!",
+        description: `You edited task number: ${task.id}!`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    } catch (error) {
+      console.error("Failed to update task", error);
+      toast({
+        title: "Failed to update task",
+        description: `You didnt update ${task.id}!`,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
+
     onClose();
   };
   const [value, setValue] = React.useState("1");
+  const [title, setTitle] = useState(task.title);
+  const [description, setDescription] = useState(task.description);
+  const [color, setColor] = useState(selectedColor);
+  const [column, setColumn] = useState(value);
   /* Here's a custom control */
   function EditableControls() {
     const {
@@ -117,6 +144,7 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
                   defaultValue={task.title}
                   isPreviewFocusable={false}
                   submitOnBlur={false}
+                  onChange={(newTitle) => setTitle(newTitle)}
                 >
                   <Flex justifyContent="space-between" alignItems="center">
                     <EditablePreview />
@@ -177,6 +205,7 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
                   textAlign="start"
                   isPreviewFocusable={false}
                   submitOnBlur={false}
+                  onChange={(description) => setDescription(description)}
                 >
                   <Flex justifyContent="space-between" alignItems="center">
                     <EditablePreview />
@@ -200,7 +229,13 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
             Save
           </Button>
           <VStack alignItems="center">
-            <RadioGroup onChange={setValue} value={value}>
+            <RadioGroup
+              onChange={(value) => {
+                setValue(value);
+                setColumn(value);
+              }}
+              value={value}
+            >
               <Stack direction="row">
                 <Radio value="1" colorScheme="gray">
                   To do

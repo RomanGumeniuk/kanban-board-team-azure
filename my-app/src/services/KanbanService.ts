@@ -66,8 +66,8 @@ class KanbanService {
   }
 
   updateTask(taskId: string, taskData: any) {
-    const key = "n-UlweK7f_HQAxViaMmuuYNRY-Mf265qBOwRP9Vu0cQjAzFu34T4GA=="; // updateTask key
-    return this.callFunction(`UpdateTask?id=${taskId}`, "POST", taskData, key);
+    const key = "zCtsI_EdhvXBw7rBWQLCzheaVG6habU1WhVX1ej-cfclAzFuyCan-g=="; // updateTask key
+    return this.callFunction(`EditTask?id=${taskId}`, "POST", taskData, key);
   }
 }
 
