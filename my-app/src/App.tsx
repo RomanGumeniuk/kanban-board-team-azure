@@ -52,7 +52,7 @@ const App: React.FC = () => {
             name="description"
             content="A Kanban board application built with React and TypeScript, styled with Chakra UI, powered by C# Azure Functions, and hosted on Azure Blob Storage."
           />
-        </Helmet>{" "}
+        </Helmet>
         <Helmet>
           <meta
             name="description"

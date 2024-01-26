@@ -39,7 +39,12 @@ type TaskDrawerProps = {
   fetchTasks: () => void;
 };
 
-function TaskDrawer({ isOpen, onClose, task, fetchTasks }: TaskDrawerProps) {
+function EditTaskDrawer({
+  isOpen,
+  onClose,
+  task,
+  fetchTasks,
+}: TaskDrawerProps) {
   const toast = useToast();
 
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -80,20 +85,14 @@ function TaskDrawer({ isOpen, onClose, task, fetchTasks }: TaskDrawerProps) {
           isClosable: true,
           position: "bottom",
         });
+
         fetchTasks();
+        onClose();
       } else {
         throw new Error("Failed to update task");
       }
     } catch (error) {
       console.error(error);
-      toast({
-        title: "Failed to update task",
-        description: `You didn't update ${task.id}!`,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
     } finally {
       setIsLoading(false);
     }
@@ -275,4 +274,4 @@ function TaskDrawer({ isOpen, onClose, task, fetchTasks }: TaskDrawerProps) {
     </Drawer>
   );
 }
-export default TaskDrawer;
+export default EditTaskDrawer;

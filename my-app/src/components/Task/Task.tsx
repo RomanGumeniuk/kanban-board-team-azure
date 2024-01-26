@@ -26,9 +26,10 @@ import kanbanService from "../../services/KanbanService";
 type TaskProps = {
   index: number;
   task: TaskModel;
+  fetchTasks: () => void;
 };
 
-function Task({ index, task }: TaskProps) {
+function Task({ index, task, fetchTasks }: TaskProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -53,6 +54,7 @@ function Task({ index, task }: TaskProps) {
             isClosable: true,
             position: "bottom",
           });
+          fetchTasks();
         } else {
           throw new Error("Failed to delete task");
         }
@@ -192,6 +194,7 @@ function Task({ index, task }: TaskProps) {
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         task={task}
+        fetchTasks={fetchTasks}
       />
     </Box>
   );

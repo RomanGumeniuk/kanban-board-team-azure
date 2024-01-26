@@ -81,7 +81,7 @@ function Column({
         .filter((task) => mapColumnNumberToColumnType(task.column) === column)
         .map((task, index) => (
           <Skeleton isLoaded={!isLoading} fadeDuration={0.5} key={task.id}>
-            <Task task={task} index={index} />
+            <Task task={task} index={index} fetchTasks={fetchTasks} />
           </Skeleton>
         ));
 
