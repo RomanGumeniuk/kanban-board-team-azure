@@ -18,7 +18,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { TaskModel } from "../../utils/models";
-import TaskDrawer from "./TaskDrawer";
+import EditTaskDrawer from "./EditTaskDrawer";
 import { useRef, useState } from "react";
 import { format } from "date-fns";
 import kanbanService from "../../services/KanbanService";
@@ -188,7 +188,7 @@ function Task({ index, task }: TaskProps) {
         Edit
       </Button>
 
-      <TaskDrawer
+      <EditTaskDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         task={task}

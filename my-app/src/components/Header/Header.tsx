@@ -19,11 +19,15 @@ const Header: React.FC = () => {
       p={4}
     >
       <Menu>
-        <MenuButton as={IconButton} icon={<HamburgerIcon />} />
+        <MenuButton
+          aria-label="menu-button"
+          as={IconButton}
+          icon={<HamburgerIcon />}
+        />
         <MenuList>
-          <MenuItem>Change Theme</MenuItem>
-          <MenuItem>Options</MenuItem>
-          <MenuItem>More Info</MenuItem>
+          <MenuItem aria-label="change-theme-menu-item">Change Theme</MenuItem>
+          <MenuItem aria-label="options-menu-item">Options</MenuItem>
+          <MenuItem aria-label="more-info-menu-item">More Info</MenuItem>
         </MenuList>
       </Menu>
       {/* <Heading

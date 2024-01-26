@@ -20,7 +20,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import ColorCircle from "../Task/Circle";
+import ColorCircle from "../Task/ColorCircle";
 import kanbanService from "../../services/KanbanService";
 
 type AddTaskModalProps = {
@@ -37,48 +37,52 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleColorSelect = (color: string) => {
     setSelectedColor(color);
   };
 
-  const handleAddTaskConfirm = () => {
+  const handleAddTaskConfirm = async () => {
+    setIsLoading(true);
+    const trimmedTitle = title.trim();
+    const finalTitle = trimmedTitle === "" ? `New Task ` : trimmedTitle;
     const taskData = {
-      title,
+      title: finalTitle,
       description,
       color: selectedColor,
       column: Number(value),
     };
 
-    kanbanService
-      .createTask(taskData)
-      .then(() => {
-        toast({
-          title: "Task Added.",
-          description: "The task has been successfully created.",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-          position: "bottom",
-        });
-
-        setTitle("");
-        setDescription("");
-        setSelectedColor("gray");
-        setValue("1");
-        onTaskAdded();
-        onClose();
-      })
-      .catch((error: any) => {
-        console.error("Error:", error);
-        toast({
-          title: "Error",
-          description: "There was an error creating the task.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-          position: "bottom",
-        });
+    try {
+      await kanbanService.createTask(taskData);
+      toast({
+        title: "Task Added.",
+        description: "The task has been successfully created.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
       });
+      setTitle("");
+      setDescription("");
+      setSelectedColor("gray");
+      setValue("1");
+      onTaskAdded();
+      onClose();
+    } catch (error) {
+      console.error("Error:", error);
+      toast({
+        title: "Error",
+        description: "There was an error creating the task.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -182,6 +186,7 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }: AddTaskModalProps) => {
               onClick={handleAddTaskConfirm}
               variant={"solid"}
               mb={0.5}
+              isLoading={isLoading}
             >
               Save
             </Button>

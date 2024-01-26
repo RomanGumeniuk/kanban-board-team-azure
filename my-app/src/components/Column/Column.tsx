@@ -8,15 +8,15 @@ import {
   useColorModeValue,
   useBreakpointValue,
   StackDirection,
+  Skeleton,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
 import { ColumnType } from "../../utils/enums";
 import Task from "../Task/Task";
 import { TaskModel } from "../../utils/models";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 import AddTaskModal from "./AddTaskModal";
-import kanbanService from "../../services/KanbanService";
+import { useState } from "react";
 
 const ColumnColorScheme: Record<ColumnType, string> = {
   TO_DO: "gray",
@@ -25,7 +25,17 @@ const ColumnColorScheme: Record<ColumnType, string> = {
   COMPLETED: "green",
 };
 
-function Column({ column }: { column: ColumnType }) {
+function Column({
+  column,
+  tasks,
+  isLoading,
+  fetchTasks,
+}: {
+  column: ColumnType;
+  tasks: TaskModel[];
+  isLoading: boolean;
+  fetchTasks: () => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
   const simpleBarColor = useColorModeValue("lightColor", "darkColor");
@@ -35,7 +45,10 @@ function Column({ column }: { column: ColumnType }) {
     md: "column",
   }) as StackDirection;
 
-  const [tasks, setTasks] = useState<TaskModel[]>([]);
+  const stackHeight = useBreakpointValue({
+    base: "100%",
+    md: 570,
+  });
 
   function mapColumnNumberToColumnType(columnNumber: number): ColumnType {
     switch (columnNumber) {
@@ -52,23 +65,25 @@ function Column({ column }: { column: ColumnType }) {
     }
   }
 
-  const fetchTasks = () => {
-    kanbanService
-      .showAllTasks()
-      .then((response) => response.json())
-      .then((data: TaskModel[]) => setTasks(data))
-      .catch((error) => console.error("Error:", error));
-  };
-
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const ColumnTasks = tasks
-    .filter((task) => mapColumnNumberToColumnType(task.column) === column)
-    .map((task, index) => {
-      return <Task key={task.id} task={task} index={index} />;
-    });
+  const ColumnTasks = isLoading
+    ? Array(5)
+        .fill(null)
+        .map((_, index) => (
+          <Skeleton
+            key={index}
+            startColor="gray.400"
+            endColor="gray.300"
+            height="50px"
+            borderRadius="md"
+          />
+        ))
+    : tasks
+        .filter((task) => mapColumnNumberToColumnType(task.column) === column)
+        .map((task, index) => (
+          <Skeleton isLoaded={!isLoading} fadeDuration={0.5} key={task.id}>
+            <Task task={task} index={index} />
+          </Skeleton>
+        ));
 
   function formatColumnType(columnType: ColumnType) {
     switch (columnType) {
@@ -84,6 +99,7 @@ function Column({ column }: { column: ColumnType }) {
         return columnType;
     }
   }
+
   return (
     <Box>
       <Heading fontSize="md" mb={5} letterSpacing="wide">
@@ -118,18 +134,22 @@ function Column({ column }: { column: ColumnType }) {
       >
         <SimpleBar
           style={{
-            height: 580,
+            height: stackHeight,
             scrollbarColor: `${simpleBarColor} transparent`,
           }}
         >
-          <Stack
-            direction={stackDirection}
-            p={4}
-            spacing={4}
-            alignItems={"center"}
-          >
-            {ColumnTasks}
-          </Stack>
+          {isLoading ? (
+            <Skeleton startColor="gray.600" endColor="gra.100" height="600px" />
+          ) : (
+            <Stack
+              direction={stackDirection}
+              p={4}
+              spacing={4}
+              alignItems={"center"}
+            >
+              {ColumnTasks}
+            </Stack>
+          )}
         </SimpleBar>
       </Box>
       <AddTaskModal

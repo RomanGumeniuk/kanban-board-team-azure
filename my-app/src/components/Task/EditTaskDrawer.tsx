@@ -21,35 +21,35 @@ import {
   DrawerCloseButton,
   Text,
   Input,
+  RadioGroup,
+  Stack,
+  Radio,
 } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
-
 import { TaskModel } from "../../utils/models";
 import { useState } from "react";
-import Circle from "./Circle";
+import ColorCircle from "./ColorCircle";
+import React from "react";
 
 type TaskDrawerProps = {
   isOpen: boolean;
   onClose: () => void;
   task: TaskModel;
 };
-
 function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
   const toast = useToast();
+
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string>("gray");
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file.name);
     }
   };
-
   const handleColorSelect = (color: string) => {
     setSelectedColor(color);
   };
-
   const handleSaveConfirm = () => {
     toast({
       title: "Task has been edited sucessfully!",
@@ -59,10 +59,9 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
       isClosable: true,
       position: "bottom",
     });
-
     onClose();
   };
-
+  const [value, setValue] = React.useState("1");
   /* Here's a custom control */
   function EditableControls() {
     const {
@@ -71,7 +70,6 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
       getCancelButtonProps,
       getEditButtonProps,
     } = useEditableControls();
-
     return isEditing ? (
       <ButtonGroup justifyContent="center" size="sm">
         <IconButton
@@ -96,13 +94,11 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
       </Flex>
     );
   }
-
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" && event.ctrlKey) {
       handleSaveConfirm();
     }
   };
-
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose} size={"xl"}>
       <DrawerOverlay />
@@ -112,7 +108,6 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
           Edit Task: {task.title} <br></br>
           Id: {task.id}
         </DrawerHeader>
-
         <DrawerBody>
           <form onKeyDown={handleKeyDown}>
             <Box display="flex" flexDirection="column" alignItems="center">
@@ -129,49 +124,31 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
                   </Flex>
                   <EditableInput autoFocus />
                 </Editable>
-                <Heading size="md">Description</Heading>
-                <Editable
-                  defaultValue={task.description}
-                  textAlign="start"
-                  isPreviewFocusable={false}
-                  submitOnBlur={false}
-                >
-                  <Flex justifyContent="space-between" alignItems="center">
-                    <EditablePreview />
-                    <EditableControls />
-                  </Flex>
-                  <EditableTextarea
-                    minHeight="150px"
-                    maxHeight="600px"
-                    autoFocus
-                  />
-                </Editable>
-
                 <Heading size="md">Color</Heading>
                 <Flex>
                   <Box width="25%" p={2}>
-                    <Circle
+                    <ColorCircle
                       color="green"
                       selectedColor={selectedColor}
                       onSelect={handleColorSelect}
                     />
                   </Box>
                   <Box width="25%" p={2}>
-                    <Circle
+                    <ColorCircle
                       color="blue"
                       selectedColor={selectedColor}
                       onSelect={handleColorSelect}
                     />
                   </Box>
                   <Box width="25%" p={2}>
-                    <Circle
+                    <ColorCircle
                       color="red"
                       selectedColor={selectedColor}
                       onSelect={handleColorSelect}
                     />
                   </Box>
                   <Box width="25%" p={2}>
-                    <Circle
+                    <ColorCircle
                       color="gray"
                       selectedColor={selectedColor}
                       onSelect={handleColorSelect}
@@ -194,11 +171,27 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
                     <Text mt={2}>Selected file: {selectedFile}</Text>
                   )}
                 </Box>
+                <Heading size="md">Description</Heading>
+                <Editable
+                  defaultValue={task.description}
+                  textAlign="start"
+                  isPreviewFocusable={false}
+                  submitOnBlur={false}
+                >
+                  <Flex justifyContent="space-between" alignItems="center">
+                    <EditablePreview />
+                    <EditableControls />
+                  </Flex>
+                  <EditableTextarea
+                    minHeight="150px"
+                    maxHeight="600px"
+                    autoFocus
+                  />
+                </Editable>
               </VStack>
             </Box>
           </form>
         </DrawerBody>
-
         <DrawerFooter>
           <Button variant="outline" mr={3} onClick={onClose}>
             Cancel
@@ -206,10 +199,27 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
           <Button colorScheme="blue" onClick={handleSaveConfirm}>
             Save
           </Button>
+          <VStack alignItems="center">
+            <RadioGroup onChange={setValue} value={value}>
+              <Stack direction="row">
+                <Radio value="1" colorScheme="gray">
+                  To do
+                </Radio>
+                <Radio value="2" colorScheme="yellow">
+                  In progress
+                </Radio>
+                <Radio value="3" colorScheme="blue">
+                  For review
+                </Radio>
+                <Radio value="4" colorScheme="green">
+                  Completed
+                </Radio>
+              </Stack>
+            </RadioGroup>
+          </VStack>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
 }
-
 export default TaskDrawer;
