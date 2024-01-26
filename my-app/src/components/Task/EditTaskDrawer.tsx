@@ -36,8 +36,10 @@ type TaskDrawerProps = {
   isOpen: boolean;
   onClose: () => void;
   task: TaskModel;
+  fetchTasks: () => void;
 };
-function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
+
+function TaskDrawer({ isOpen, onClose, task, fetchTasks }: TaskDrawerProps) {
   const toast = useToast();
 
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -48,11 +50,14 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
       setSelectedFile(file.name);
     }
   };
+  const [isLoading, setIsLoading] = useState(false);
   const handleColorSelect = (color: string) => {
     setSelectedColor(color);
     setColor(color);
   };
   const handleSaveConfirm = async () => {
+    setIsLoading(true);
+
     const taskData = {
       title,
       description,
@@ -61,28 +66,37 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
     };
 
     try {
-      await kanbanService.updateTask(task.id.toString(), taskData);
-      toast({
-        title: "Task has been edited successfully!",
-        description: `You edited task number: ${task.id}!`,
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
+      const response = await kanbanService.updateTask(
+        task.id.toString(),
+        taskData
+      );
+
+      if (response.status === 200) {
+        toast({
+          title: "Task has been edited successfully!",
+          description: `You edited task number: ${task.id}!`,
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+        fetchTasks();
+      } else {
+        throw new Error("Failed to update task");
+      }
     } catch (error) {
-      console.error("Failed to update task", error);
+      console.error(error);
       toast({
         title: "Failed to update task",
-        description: `You didnt update ${task.id}!`,
+        description: `You didn't update ${task.id}!`,
         status: "error",
         duration: 5000,
         isClosable: true,
         position: "bottom",
       });
+    } finally {
+      setIsLoading(false);
     }
-
-    onClose();
   };
   const [value, setValue] = React.useState("1");
   const [title, setTitle] = useState(task.title);
@@ -219,39 +233,43 @@ function TaskDrawer({ isOpen, onClose, task }: TaskDrawerProps) {
                 </Editable>
               </VStack>
             </Box>
+            <VStack alignItems="center">
+              <RadioGroup
+                onChange={(value) => {
+                  setValue(value);
+                  setColumn(value);
+                }}
+                value={value}
+              >
+                <Stack direction="row">
+                  <Radio value="1" colorScheme="gray">
+                    To do
+                  </Radio>
+                  <Radio value="2" colorScheme="yellow">
+                    In progress
+                  </Radio>
+                  <Radio value="3" colorScheme="blue">
+                    For review
+                  </Radio>
+                  <Radio value="4" colorScheme="green">
+                    Completed
+                  </Radio>
+                </Stack>
+              </RadioGroup>
+            </VStack>
           </form>
         </DrawerBody>
         <DrawerFooter>
           <Button variant="outline" mr={3} onClick={onClose}>
             Cancel
           </Button>
-          <Button colorScheme="blue" onClick={handleSaveConfirm}>
+          <Button
+            colorScheme="blue"
+            isLoading={isLoading}
+            onClick={handleSaveConfirm}
+          >
             Save
           </Button>
-          <VStack alignItems="center">
-            <RadioGroup
-              onChange={(value) => {
-                setValue(value);
-                setColumn(value);
-              }}
-              value={value}
-            >
-              <Stack direction="row">
-                <Radio value="1" colorScheme="gray">
-                  To do
-                </Radio>
-                <Radio value="2" colorScheme="yellow">
-                  In progress
-                </Radio>
-                <Radio value="3" colorScheme="blue">
-                  For review
-                </Radio>
-                <Radio value="4" colorScheme="green">
-                  Completed
-                </Radio>
-              </Stack>
-            </RadioGroup>
-          </VStack>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
