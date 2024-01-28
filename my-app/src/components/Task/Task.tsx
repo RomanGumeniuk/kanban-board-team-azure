@@ -1,4 +1,4 @@
-import { DeleteIcon, InfoIcon } from "@chakra-ui/icons";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -17,9 +17,9 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { DeleteIcon, InfoIcon } from "@chakra-ui/icons";
 import { TaskModel } from "../../utils/models";
 import EditTaskDrawer from "./EditTaskDrawer";
-import { useRef, useState } from "react";
 import { format } from "date-fns";
 import kanbanService from "../../services/KanbanService";
 
@@ -33,59 +33,83 @@ function Task({ index, task, fetchTasks }: TaskProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const btnRef = useRef(null);
-
   const shouldShowDeleteIcon = useBreakpointValue({ base: true, md: false });
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  //OnclickIkonka delete
-  const handleDeleteConfirm = () => {
-    setIsLoading(true); // Set isLoading to true when the delete operation starts
-    kanbanService
-      .deleteTask(task.id.toString())
-      .then(({ status }) => {
-        if (status === 200) {
-          toast({
-            title: "Task deleted.",
-            description: "The task has been successfully deleted.",
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-            position: "bottom",
-          });
-          fetchTasks();
-        } else {
-          throw new Error("Failed to delete task");
-        }
-        onClose();
-      })
-      .catch((error: { message: any }) => {
-        console.error("Error:", error);
+  const handleDeleteConfirm = async () => {
+    try {
+      const response = await kanbanService.deleteTask(task.id.toString());
+      if (response.status === 200) {
         toast({
-          title: "Error",
-          description: `There is not task with that id in Database`,
-          status: "error",
+          title: "Task deleted.",
+          description: "The task has been successfully deleted.",
+          status: "success",
           duration: 5000,
           isClosable: true,
           position: "bottom",
         });
-      })
-      .finally(() => {
-        setIsLoading(false);
+        fetchTasks();
+      } else {
+        throw new Error("Failed to delete task");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete the task.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
       });
+    }
+    onClose();
   };
 
-  function formatDate(dateString: string) {
+  const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
+    const now = new Date();
+
     if (isNaN(date.getTime())) {
       return "Invalid date";
     }
-    return format(date, "do MMMM yyyy, h:mm aaaa");
-  }
 
-  const handleEditButtonClick = () => {
-    setIsDrawerOpen(true);
+    const oneDay = 24 * 60 * 60 * 1000; // milliseconds in one day
+    const differenceInDays = Math.round(
+      (now.getTime() - date.getTime()) / oneDay
+    );
+    const isToday = date.toDateString() === now.toDateString();
+
+    // Resetting 'now' to today's date as it was changed above
+    now.setDate(new Date().getDate());
+
+    const isYesterday =
+      new Date(now.setDate(now.getDate() - 1)).toDateString() ===
+      date.toDateString();
+    const isSameYear = date.getFullYear() === now.getFullYear();
+
+    let formatString = "";
+
+    if (isToday) {
+      formatString = `'Today', HH:mm`;
+    } else if (isYesterday) {
+      formatString = `'Yesterday', HH:mm`;
+    } else if (differenceInDays <= 7) {
+      // Within the last week: Show day of the week and time
+      formatString = "EEEE, HH:mm";
+    } else if (isSameYear) {
+      // More than a week ago, but within the same year: Show day, month and time
+      formatString = "do MMMM, HH:mm";
+    } else {
+      // Different year: Show day, month and year
+      formatString = "do MMMM yyyy, HH:mm";
+    }
+
+    return format(date, formatString);
+  };
+
+  const handleTaskClick = () => setIsDrawerOpen(true);
+
+  const handleIconClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
   };
 
   return (
@@ -103,22 +127,30 @@ function Task({ index, task, fetchTasks }: TaskProps) {
       cursor="pointer"
       bgColor={task.color}
       aria-label={`Task ${index + 1}`}
+      onClick={handleTaskClick}
     >
       <IconButton
         position="absolute"
         top={0}
         right={0}
         zIndex={200}
-        aria-label="delete-task"
-        size="md"
-        colorScheme="solid"
-        color={"gray.700"}
+        aria-label="Delete task"
+        size="sm"
+        bg={"transparent"}
         icon={<DeleteIcon />}
         opacity={shouldShowDeleteIcon ? 1 : 0}
-        _groupHover={{
-          opacity: shouldShowDeleteIcon ? 1 : 1,
+        _groupHover={{ opacity: 0.8 }}
+        transition="all 0.35s ease-in-out"
+        _hover={{
+          bg: "transparent",
+          transform: "scale(1.05)",
+          boxShadow: "0 0 5px 10  px rgba(0, 0, 0, 0.8)",
         }}
-        onClick={onOpen}
+        color={useColorModeValue("gray.900", "gray.900")}
+        onClick={(e) => {
+          handleIconClick(e);
+          onOpen();
+        }}
       />
       <Tooltip
         label={
@@ -135,24 +167,29 @@ function Task({ index, task, fetchTasks }: TaskProps) {
           top={0}
           left={0}
           zIndex={200}
-          aria-label="info-task"
+          aria-label="Task info"
           size="xs"
-          colorScheme="solid"
-          color={"gray.700"}
           icon={<InfoIcon />}
           opacity={shouldShowDeleteIcon ? 1 : 0}
-          _groupHover={{
-            opacity: shouldShowDeleteIcon ? 1 : 1,
+          _groupHover={{ opacity: 0.8 }}
+          onClick={handleIconClick}
+          bg="transparent"
+          transition="all 0.35s ease-in-out"
+          _hover={{
+            bg: "transparent",
+            transform: "scale(1.1)",
+            boxShadow: "0 0 5px 10  px rgba(0, 0, 0, 0.8)",
           }}
+          color={useColorModeValue("gray.900", "gray.900")}
         />
       </Tooltip>
       <Box
-        color={useColorModeValue("gray.800", "gray.50")}
+        color={useColorModeValue("gray.900", "gray.900")}
         fontWeight="semibold"
         minH="70px"
         maxH="200px"
       >
-        <Text fontSize="xs" opacity="0.6">
+        <Text fontSize="xs" opacity="0.55">
           #{task.id}
         </Text>
         {task.title}
@@ -163,31 +200,21 @@ function Task({ index, task, fetchTasks }: TaskProps) {
           <ModalHeader>Delete Task {task.id}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>Are you sure you want to delete this task?</ModalBody>
-
           <ModalFooter>
             <Button
               colorScheme="blue"
               onClick={handleDeleteConfirm}
               mr={3}
-              isLoading={isLoading}
+              isLoading={false}
             >
               Confirm
             </Button>
-            <Button variant={"ghost"} onClick={onClose}>
+            <Button variant="ghost" onClick={onClose}>
               Close
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Button
-        size={"xs"}
-        ref={btnRef}
-        onClick={handleEditButtonClick}
-        variant={"solid"}
-      >
-        Edit
-      </Button>
-
       <EditTaskDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}

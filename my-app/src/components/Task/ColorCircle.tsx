@@ -1,22 +1,30 @@
-import { Circle as ChakraCircle } from "@chakra-ui/react";
+import { Circle as ChakraCircle, BoxProps } from "@chakra-ui/react";
 
-type ColorCircleProps = {
+type ColorCircleProps = BoxProps & {
   color: string;
   selectedColor: string;
-  onSelect: (color: string) => void;
+  onColorSelect: (color: string) => void;
 };
 
-const ColorCircle = ({ color, selectedColor, onSelect }: ColorCircleProps) => (
+const ColorCircle: React.FC<ColorCircleProps> = ({
+  color,
+  selectedColor,
+  onColorSelect,
+  m = "10px", // default margin
+  ...props
+}) => (
   <ChakraCircle
-    size="50px"
+    size="60px"
     bg={color}
-    mr={2}
     cursor="pointer"
     borderWidth={selectedColor === color ? "3px" : "0px"}
-    borderColor="blue.100"
-    _hover={{ scale: 1.1 }}
+    borderColor="gray.600"
+    _hover={{ boxShadow: "0 0 8px 2px rgba(0, 0, 0, 0.2)" }}
     transition="ease-in-out 0.05s"
-    onClick={() => onSelect(color)}
+    onClick={() => onColorSelect(color)}
+    m={m}
+    aria-label={`Select color ${color}`}
+    {...props}
   />
 );
 

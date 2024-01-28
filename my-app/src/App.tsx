@@ -1,49 +1,52 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./App.css";
 import {
   Container,
   SimpleGrid,
   ChakraProvider,
   extendTheme,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
-import { ColumnType } from "./utils/enums.ts";
-import Column from "./components/Column/Column.tsx";
-import Header from "./components/Header/Header.tsx";
-import kanbanService from "./services/KanbanService"; // Import kanbanService
-import { TaskModel } from "./utils/models.ts";
+import { ColumnType } from "./utils/enums";
+import Column from "./components/Column/Column";
+import Header from "./components/Header/Header";
+import kanbanService from "./services/KanbanService";
+import { TaskModel } from "./utils/models";
 import { Helmet } from "react-helmet";
 
-// Define a custom theme with a larger base font size
 const theme = extendTheme({
   styles: {
     global: {
-      fontSize: "18px", // Adjust this value to your needs
+      fontSize: "18px",
     },
   },
 });
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<TaskModel[]>([]);
-  const [isLoading, setIsLoading] = useState(true); // Add a state for tasks
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchTasks = () => {
+  const fetchTasks = useCallback(async () => {
     setIsLoading(true);
-    kanbanService
-      .showAllTasks()
-      .then((response) => response.json())
-      .then((data: TaskModel[]) => {
-        setTasks(data);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        setIsLoading(false);
-      });
-  };
+    setError(null);
+    try {
+      const response = await kanbanService.showAllTasks();
+      const data = await response.json();
+      setTasks(data);
+    } catch (error) {
+      console.error("Error:", error);
+      setError("Failed to fetch tasks");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [fetchTasks]);
+
   return (
     <ChakraProvider theme={theme}>
       <div id="main-div">
@@ -53,16 +56,16 @@ const App: React.FC = () => {
             content="A Kanban board application built with React and TypeScript, styled with Chakra UI, powered by C# Azure Functions, and hosted on Azure Blob Storage."
           />
         </Helmet>
-        <Helmet>
-          <meta
-            name="description"
-            content="This is a description of my web app."
-          />
-        </Helmet>
         <Header />
         <Container maxWidth={"container.lg"} px={4} py={10}>
+          {error && (
+            <Alert status="error">
+              <AlertIcon />
+              Error: {error}
+            </Alert>
+          )}
           <SimpleGrid
-            columns={{ base: 1, md: 4 }} //resize options for columns
+            columns={{ base: 1, md: 4 }}
             spacing={{ base: 16, md: 5 }}
           >
             <Column

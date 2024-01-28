@@ -57,6 +57,8 @@ const AddTaskModal = ({
     setSelectedColor(color);
   };
 
+  const COLORS = ["#99BC85", "#FF8080", "#F6FDC3", "#CDFAD5", "#E5E1DA"];
+
   const handleAddTaskConfirm = async () => {
     setIsLoading(true);
     const trimmedTitle = title.trim();
@@ -80,8 +82,8 @@ const AddTaskModal = ({
       });
       setTitle("");
       setDescription("");
-      setSelectedColor("gray");
-      setValue("1");
+      setSelectedColor("#99BC85");
+      setValue(mapColumnTypeToRadioButtonValue(column));
       onTaskAdded();
       onClose();
     } catch (error) {
@@ -104,6 +106,18 @@ const AddTaskModal = ({
       handleAddTaskConfirm();
     }
   };
+  if (!selectedColor || selectedColor === "gray") {
+    // przykładowy warunek sprawdzający, czy kolor został wybrany
+    toast({
+      title: "Wybór koloru",
+      description: "Proszę wybrać kolor przed dodaniem zadania.",
+      status: "warning",
+      duration: 5000,
+      isClosable: true,
+      position: "bottom",
+    });
+    return; // Przerwanie funkcji, jeśli kolor nie został wybrany
+  }
 
   return (
     <Modal
@@ -124,6 +138,7 @@ const AddTaskModal = ({
                 placeholder="Title"
                 ref={initialRef}
                 value={title}
+                maxLength={110}
                 onChange={(e) => setTitle(e.target.value)}
               />
             </FormControl>
@@ -141,35 +156,16 @@ const AddTaskModal = ({
 
             <FormControl mt={4}>
               <FormLabel>Color</FormLabel>
-              <Flex>
-                <Box width="25%" p={2}>
-                  <ColorCircle
-                    color="#99BC85"
-                    selectedColor={selectedColor}
-                    onSelect={handleColorSelect}
-                  />
-                </Box>
-                <Box width="25%" p={2}>
-                  <ColorCircle
-                    color="#FF8080"
-                    selectedColor={selectedColor}
-                    onSelect={handleColorSelect}
-                  />
-                </Box>
-                <Box width="25%" p={2}>
-                  <ColorCircle
-                    color="#F6FDC3"
-                    selectedColor={selectedColor}
-                    onSelect={handleColorSelect}
-                  />
-                </Box>
-                <Box width="25%" p={2}>
-                  <ColorCircle
-                    color="#CDFAD5"
-                    selectedColor={selectedColor}
-                    onSelect={handleColorSelect}
-                  />
-                </Box>
+              <Flex ml={10}>
+                {COLORS.map((color) => (
+                  <Box key={color} width="20%">
+                    <ColorCircle
+                      color={color}
+                      selectedColor={selectedColor}
+                      onColorSelect={handleColorSelect}
+                    />
+                  </Box>
+                ))}
               </Flex>
             </FormControl>
           </ModalBody>

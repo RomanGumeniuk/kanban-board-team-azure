@@ -1,4 +1,5 @@
 import { AddIcon } from "@chakra-ui/icons";
+import { motion } from "framer-motion";
 import {
   Badge,
   Box,
@@ -16,7 +17,7 @@ import { TaskModel } from "../../utils/models";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 import AddTaskModal from "./AddTaskModal";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 const ColumnColorScheme: Record<ColumnType, string> = {
   TO_DO: "gray",
@@ -45,6 +46,11 @@ function Column({
     md: "column",
   }) as StackDirection;
 
+  const taskVariants = {
+    hidden: { scale: 0.3, opacity: 0, y: 30, rotate: 1 },
+    visible: { scale: 1, opacity: 1, y: 0, rotate: 0 },
+  };
+
   const stackHeight = useBreakpointValue({
     base: "100%",
     md: 570,
@@ -65,8 +71,9 @@ function Column({
     }
   }
 
-  const ColumnTasks = isLoading
-    ? Array(5)
+  const ColumnTasks = useMemo(() => {
+    if (isLoading) {
+      return Array(5)
         .fill(null)
         .map((_, index) => (
           <Skeleton
@@ -76,14 +83,29 @@ function Column({
             height="50px"
             borderRadius="md"
           />
-        ))
-    : tasks
+        ));
+    } else {
+      return tasks
         .filter((task) => mapColumnNumberToColumnType(task.column) === column)
         .map((task, index) => (
           <Skeleton isLoaded={!isLoading} fadeDuration={0.5} key={task.id}>
-            <Task task={task} index={index} fetchTasks={fetchTasks} />
+            <motion.div
+              key={task.id}
+              variants={taskVariants}
+              initial="hidden"
+              animate="visible"
+              transition={{
+                ease: "easeOut",
+                duration: 0.2,
+                delay: 0.1 * index,
+              }}
+            >
+              <Task task={task} index={index} fetchTasks={fetchTasks} />
+            </motion.div>
           </Skeleton>
         ));
+    }
+  }, [isLoading, tasks, column, fetchTasks]);
 
   function formatColumnType(columnType: ColumnType) {
     switch (columnType) {
