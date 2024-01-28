@@ -144,7 +144,7 @@ function Task({ index, task, fetchTasks }: TaskProps) {
         _hover={{
           bg: "transparent",
           transform: "scale(1.05)",
-          boxShadow: "0 0 5px 10  px rgba(0, 0, 0, 0.8)",
+          boxShadow: "0 0 10px 10  px rgba(0, 0, 0, 4)",
         }}
         color={useColorModeValue("gray.900", "gray.900")}
         onClick={(e) => {
@@ -171,7 +171,7 @@ function Task({ index, task, fetchTasks }: TaskProps) {
           size="xs"
           icon={<InfoIcon />}
           opacity={shouldShowDeleteIcon ? 1 : 0}
-          _groupHover={{ opacity: 0.8 }}
+          _groupHover={{ opacity: 0.7 }}
           onClick={handleIconClick}
           bg="transparent"
           transition="all 0.35s ease-in-out"

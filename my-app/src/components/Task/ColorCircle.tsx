@@ -10,22 +10,30 @@ const ColorCircle: React.FC<ColorCircleProps> = ({
   color,
   selectedColor,
   onColorSelect,
-  m = "10px", // default margin
+  m = "10px", // Default margin
   ...props
-}) => (
-  <ChakraCircle
-    size="60px"
-    bg={color}
-    cursor="pointer"
-    borderWidth={selectedColor === color ? "3px" : "0px"}
-    borderColor="gray.600"
-    _hover={{ boxShadow: "0 0 8px 2px rgba(0, 0, 0, 0.2)" }}
-    transition="ease-in-out 0.05s"
-    onClick={() => onColorSelect(color)}
-    m={m}
-    aria-label={`Select color ${color}`}
-    {...props}
-  />
-);
+}) => {
+  const isSelected = selectedColor === color;
+  const borderColor = isSelected ? "blue.500" : "transparent"; // More visible border color when selected
+
+  return (
+    <ChakraCircle
+      size="60px"
+      bg={color}
+      cursor="pointer"
+      borderWidth="3px" // Consistent border width
+      borderColor={borderColor}
+      _hover={{
+        boxShadow: "0 0 20px 2px rgba(0, 0, 0, 0.3)",
+        transform: "scale(1.1)",
+      }} // Adjust hover effect
+      transition="ease-in-out 0.15s" // Smoother transition
+      onClick={() => onColorSelect(color)}
+      m={m}
+      aria-label={`Select color ${color}`}
+      {...props}
+    />
+  );
+};
 
 export default ColorCircle;

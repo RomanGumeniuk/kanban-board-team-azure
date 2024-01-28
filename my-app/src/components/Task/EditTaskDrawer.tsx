@@ -1,4 +1,4 @@
-import { useState, useCallback, ChangeEvent } from "react";
+import { useState, useCallback, useEffect, ChangeEvent } from "react";
 import {
   Button,
   Drawer,
@@ -54,7 +54,7 @@ const EditableControls = () => {
     </ButtonGroup>
   ) : (
     <IconButton
-      aria-label="edit"
+      aria-label="editButton"
       size="sm"
       icon={<EditIcon />}
       {...getEditButtonProps()}
@@ -69,47 +69,46 @@ type TaskDrawerProps = {
   fetchTasks: () => void;
 };
 
-function EditTaskDrawer({
+const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
   isOpen,
   onClose,
   task,
   fetchTasks,
-}: TaskDrawerProps) {
+}) => {
   const toast = useToast();
+  const [selectedColor, setSelectedColor] = useState<string>("#99BC85");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [column, setColumn] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string>(
-    task.color || "gray"
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [title, setTitle] = useState(task.title);
-  const [description, setDescription] = useState(task.description);
-  const [column, setColumn] = useState(task.column.toString());
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setSelectedFile(file.name);
-    }
-  };
+  // When the task prop updates, reset the local state
+  useEffect(() => {
+    setSelectedColor(task.color || "#99BC85");
+    setTitle(task.title);
+    setDescription(task.description);
+    setColumn(task.column.toString());
+  }, [task]);
 
   const handleColorSelect = useCallback((color: string) => {
-    console.log("Selected color:", color); // Debugging line
     setSelectedColor(color);
   }, []);
 
   const handleSaveConfirm = async () => {
+    // Prevent saving if color is not selected
     if (!selectedColor || selectedColor === "gray") {
-      // przykładowy warunek sprawdzający, czy kolor został wybrany
       toast({
-        title: "Wybór koloru",
-        description: "Proszę wybrać kolor przed dodaniem zadania.",
+        title: "Color Selection",
+        description: "Please select a color before updating the task.",
         status: "warning",
         duration: 5000,
         isClosable: true,
         position: "bottom",
       });
-      return; // Przerwanie funkcji, jeśli kolor nie został wybrany
+      return;
     }
+
     setIsLoading(true);
     const updatedTask = {
       ...task,
@@ -126,8 +125,8 @@ function EditTaskDrawer({
       );
       if (response.status === 200) {
         toast({
-          title: "Task has been edited successfully!",
-          description: `You edited task number: ${task.id}!`,
+          title: "Task Updated Successfully",
+          description: `Task number ${task.id} has been updated.`,
           status: "success",
           duration: 5000,
           isClosable: true,
@@ -139,24 +138,28 @@ function EditTaskDrawer({
         throw new Error("Failed to update task");
       }
     } catch (error) {
-      if (error instanceof Error) {
-        console.error(error);
-        toast({
-          title: "Error updating task",
-          description: error.message,
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-      } else {
-        console.error("An unknown error occurred");
-      }
+      toast({
+        title: "Error Updating Task",
+        description:
+          error instanceof Error ? error.message : "An unknown error occurred",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const COLORS = ["#99BC85", "#FF8080", "#F6FDC3", "#CDFAD5", "#E5E1DA"]; //kolory do wyboru
+  const COLORS = ["#99BC85", "#FF8080", "#F6FDC3", "#CDFAD5", "#E5E1DA"]; // Available colors
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file.name);
+    }
+  };
 
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="xl">
@@ -164,7 +167,7 @@ function EditTaskDrawer({
       <DrawerContent>
         <DrawerCloseButton />
         <DrawerHeader>
-          Edit Task: {task.title} <br /> Id: {task.id}
+          Edit Task: {task.title} <br /> ID: {task.id}
         </DrawerHeader>
         <DrawerBody>
           <Flex direction="column" align="center" justify="center">
@@ -206,7 +209,7 @@ function EditTaskDrawer({
       </DrawerContent>
     </Drawer>
   );
-}
+};
 
 type EditableFieldProps = {
   label: string;
