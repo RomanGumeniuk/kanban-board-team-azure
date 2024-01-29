@@ -126,6 +126,7 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
   };
 
   const drawerSize = useBreakpointValue({ base: "full", md: "xl" });
+  // const saveButtonSize = useBreakpointValue({base: })
 
   return (
     <Drawer
@@ -147,6 +148,7 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
                   defaultValue={title}
                   onChange={(e) => setTitle(e.target.value)}
                   autoFocus
+                  variant={"filled"}
                 />
               </Box>
               <EditableColorSelection
@@ -175,13 +177,15 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
           </Flex>
         </DrawerBody>
         <DrawerFooter>
-          <Button variant="outline" mr={3} onClick={onClose}>
+          <Button variant="outline" mr={5} onClick={onClose}>
             Cancel
           </Button>
           <Button
             colorScheme="blue"
             isLoading={isLoading}
             onClick={handleSaveConfirm}
+            w={"25%"}
+            mr={40}
           >
             Save
           </Button>
