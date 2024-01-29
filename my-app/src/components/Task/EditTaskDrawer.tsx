@@ -76,7 +76,7 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
     const updatedTask = {
       ...task,
       title,
-      description,
+      description: encodeURIComponent(description),
       color: encodeURIComponent(selectedColor),
       column: parseInt(column),
     };
@@ -204,6 +204,7 @@ function EditableColorSelection({
   onSelect,
   colors,
 }: EditableColorSelectionProps) {
+  const customMargin = useBreakpointValue({ md: "10", base: "2" });
   return (
     <Box>
       <Heading size="md">{label}</Heading>
@@ -211,7 +212,7 @@ function EditableColorSelection({
         {colors.map((color) => (
           <ColorCircle
             key={color}
-            m={10}
+            m={customMargin}
             color={color}
             selectedColor={selectedColor}
             onColorSelect={onSelect}

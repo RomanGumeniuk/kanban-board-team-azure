@@ -156,7 +156,7 @@ const AddTaskModal = ({
 
             <FormControl mt={4}>
               <FormLabel>Color</FormLabel>
-              <Flex ml={10}>
+              <Flex mr={10}>
                 {COLORS.map((color) => (
                   <Box key={color} width="20%">
                     <ColorCircle

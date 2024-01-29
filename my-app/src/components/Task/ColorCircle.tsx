@@ -1,4 +1,8 @@
-import { Circle as ChakraCircle, BoxProps } from "@chakra-ui/react";
+import {
+  Circle as ChakraCircle,
+  BoxProps,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 
 type ColorCircleProps = BoxProps & {
   color: string;
@@ -14,20 +18,27 @@ const ColorCircle: React.FC<ColorCircleProps> = ({
   ...props
 }) => {
   const isSelected = selectedColor === color;
-  const borderColor = isSelected ? "blue.500" : "transparent"; // More visible border color when selected
+  const borderColor = isSelected ? "#37B5B6" : "transparent"; // More visible border color when selected
+
+  // Adjust the size based on the current breakpoint
+  const circleSize = useBreakpointValue({
+    base: "40px",
+    sm: "50px",
+    md: "60px",
+  });
 
   return (
     <ChakraCircle
-      size="60px"
+      size={circleSize}
       bg={color}
       cursor="pointer"
-      borderWidth="3px" // Consistent border width
+      borderWidth="2.5px"
       borderColor={borderColor}
       _hover={{
         boxShadow: "0 0 20px 2px rgba(0, 0, 0, 0.3)",
         transform: "scale(1.1)",
-      }} // Adjust hover effect
-      transition="ease-in-out 0.15s" // Smoother transition
+      }}
+      transition="ease-in-out 0.15s"
       onClick={() => onColorSelect(color)}
       m={m}
       aria-label={`Select color ${color}`}
