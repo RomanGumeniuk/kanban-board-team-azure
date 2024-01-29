@@ -10,7 +10,7 @@ const ColorCircle: React.FC<ColorCircleProps> = ({
   color,
   selectedColor,
   onColorSelect,
-  m = "10px", // Default margin
+  m = "10",
   ...props
 }) => {
   const isSelected = selectedColor === color;

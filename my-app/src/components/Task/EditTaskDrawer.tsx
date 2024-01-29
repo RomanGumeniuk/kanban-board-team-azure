@@ -25,6 +25,7 @@ import {
   RadioGroup,
   Stack,
   Radio,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
 import { TaskModel } from "../../utils/models";
@@ -114,10 +115,11 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
       ...task,
       title,
       description,
-      color: selectedColor,
+      color: encodeURIComponent(selectedColor),
       column: parseInt(column),
     };
 
+    console.log(updatedTask); // Add this line
     try {
       const response = await kanbanService.updateTask(
         task.id.toString(),
@@ -161,8 +163,15 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
     }
   };
 
+  const drawerSize = useBreakpointValue({ base: "full", md: "xl" });
+
   return (
-    <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="xl">
+    <Drawer
+      isOpen={isOpen}
+      placement="right"
+      onClose={onClose}
+      size={drawerSize}
+    >
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
@@ -224,6 +233,8 @@ function EditableField({
   onChange,
   isTextarea = false,
 }: EditableFieldProps) {
+  const textareaSize = useBreakpointValue({ base: "100px", md: "150px" });
+
   return (
     <Box>
       <Heading size="md">{label}</Heading>
@@ -238,7 +249,11 @@ function EditableField({
           <EditableControls />
         </Flex>
         {isTextarea ? (
-          <EditableTextarea minHeight="150px" maxHeight="600px" autoFocus />
+          <EditableTextarea
+            minHeight={textareaSize}
+            maxHeight="600px"
+            autoFocus
+          />
         ) : (
           <EditableInput autoFocus />
         )}
@@ -285,6 +300,8 @@ type FileUploadProps = {
 };
 
 function FileUpload({ label, selectedFile, onChange }: FileUploadProps) {
+  const inputDisplay = useBreakpointValue({ base: "block", md: "none" });
+
   return (
     <Box>
       <Heading size="md">{label}</Heading>
@@ -292,7 +309,7 @@ function FileUpload({ label, selectedFile, onChange }: FileUploadProps) {
         type="file"
         accept="image/*"
         id="file-upload"
-        style={{ display: "none" }}
+        style={{ display: inputDisplay }}
         onChange={onChange}
       />
       <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
@@ -328,5 +345,4 @@ function TaskColumnSelection({ value, onChange }: TaskColumnSelectionProps) {
     </RadioGroup>
   );
 }
-
 export default EditTaskDrawer;

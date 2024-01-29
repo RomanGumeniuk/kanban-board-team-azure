@@ -18,6 +18,7 @@ import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 import AddTaskModal from "./AddTaskModal";
 import { useMemo, useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const ColumnColorScheme: Record<ColumnType, string> = {
   TO_DO: "gray",
@@ -80,7 +81,7 @@ function Column({
             key={index}
             startColor="gray.400"
             endColor="gray.300"
-            height="50px"
+            height="20px"
             borderRadius="md"
           />
         ));

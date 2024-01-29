@@ -93,13 +93,10 @@ function Task({ index, task, fetchTasks }: TaskProps) {
     } else if (isYesterday) {
       formatString = `'Yesterday', HH:mm`;
     } else if (differenceInDays <= 7) {
-      // Within the last week: Show day of the week and time
       formatString = "EEEE, HH:mm";
     } else if (isSameYear) {
-      // More than a week ago, but within the same year: Show day, month and time
       formatString = "do MMMM, HH:mm";
     } else {
-      // Different year: Show day, month and year
       formatString = "do MMMM yyyy, HH:mm";
     }
 

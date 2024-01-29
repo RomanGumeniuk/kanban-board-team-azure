@@ -37,11 +37,6 @@ class KanbanService {
     return response;
   }
 
-  getTask(taskId: string) {
-    const key = "37JcphrBSINXZqnkLxT3cF7NWaiSoLU_vuqX6zO3V-k_AzFueZL-sQ=="; // getTask key
-    return this.callFunction(`GetTask?id=${taskId}`, "GET", null, key);
-  }
-
   async deleteTask(taskId: string) {
     const key = "KkUnRlpk5Qt1j2OvJXQyW1OSR42o-pZD5Du86ohos4jiAzFu3zalgQ=="; // deleteTask key
     const response = await this.callFunction(
