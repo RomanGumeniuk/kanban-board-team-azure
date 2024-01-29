@@ -12,56 +12,18 @@ import {
   VStack,
   Box,
   Flex,
-  Editable,
-  EditableInput,
-  EditablePreview,
-  EditableTextarea,
-  IconButton,
-  ButtonGroup,
-  useEditableControls,
+  Input,
+  Textarea,
   DrawerCloseButton,
   Text,
-  Input,
   RadioGroup,
   Stack,
   Radio,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
 import { TaskModel } from "../../utils/models";
 import ColorCircle from "./ColorCircle";
 import kanbanService from "../../services/KanbanService";
-
-const EditableControls = () => {
-  const {
-    isEditing,
-    getSubmitButtonProps,
-    getCancelButtonProps,
-    getEditButtonProps,
-  } = useEditableControls();
-
-  return isEditing ? (
-    <ButtonGroup justifyContent="center" size="sm">
-      <IconButton
-        aria-label="submit"
-        icon={<CheckIcon />}
-        {...getSubmitButtonProps()}
-      />
-      <IconButton
-        aria-label="cancel"
-        icon={<CloseIcon />}
-        {...getCancelButtonProps()}
-      />
-    </ButtonGroup>
-  ) : (
-    <IconButton
-      aria-label="editButton"
-      size="sm"
-      icon={<EditIcon />}
-      {...getEditButtonProps()}
-    />
-  );
-};
 
 type TaskDrawerProps = {
   isOpen: boolean;
@@ -175,25 +137,34 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader>
-          Edit Task: {task.title} <br /> ID: {task.id}
-        </DrawerHeader>
+        <DrawerHeader>Edit Task #{task.id}</DrawerHeader>
         <DrawerBody>
           <Flex direction="column" align="center" justify="center">
             <VStack spacing={5} align="stretch" w="100%" maxW="85%">
-              <EditableField label="Title" value={title} onChange={setTitle} />
+              <Box>
+                <Heading size="md">Title</Heading>
+                <Input
+                  defaultValue={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  autoFocus
+                />
+              </Box>
               <EditableColorSelection
                 label="Color"
                 selectedColor={selectedColor}
                 onSelect={handleColorSelect}
                 colors={COLORS}
               />
-              <EditableField
-                label="Description"
-                value={description}
-                onChange={setDescription}
-                isTextarea
-              />
+              <Box>
+                <Heading size="md">Description</Heading>
+                <Textarea
+                  defaultValue={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  minHeight="150px"
+                  maxHeight="600px"
+                  variant={"filled"}
+                />
+              </Box>
               <FileUpload
                 label="Image"
                 selectedFile={selectedFile}
@@ -219,48 +190,6 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
     </Drawer>
   );
 };
-
-type EditableFieldProps = {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  isTextarea?: boolean;
-};
-
-function EditableField({
-  label,
-  value,
-  onChange,
-  isTextarea = false,
-}: EditableFieldProps) {
-  const textareaSize = useBreakpointValue({ base: "100px", md: "150px" });
-
-  return (
-    <Box>
-      <Heading size="md">{label}</Heading>
-      <Editable
-        defaultValue={value}
-        isPreviewFocusable={false}
-        submitOnBlur={false}
-        onChange={onChange}
-      >
-        <Flex justifyContent="space-between" alignItems="center">
-          <EditablePreview />
-          <EditableControls />
-        </Flex>
-        {isTextarea ? (
-          <EditableTextarea
-            minHeight={textareaSize}
-            maxHeight="600px"
-            autoFocus
-          />
-        ) : (
-          <EditableInput autoFocus />
-        )}
-      </Editable>
-    </Box>
-  );
-}
 
 type EditableColorSelectionProps = {
   label: string;
