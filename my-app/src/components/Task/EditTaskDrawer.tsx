@@ -145,7 +145,8 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
         toast({
           title: "Image has been uploaded successfully!",
           status: "success",
-          duration: 5000,isClosable: true,
+          duration: 5000,
+          isClosable: true,
           position: "bottom",
         });
       } catch (error: any) {
@@ -208,7 +209,56 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
       setIsLoading(false);
     }
   };
-  
+
+  const handleFileDelete = async (fileName: string) => {
+    try {
+      const blobClient = containerClient.getBlockBlobClient(fileName);
+      await blobClient.delete();
+
+      // Remove the file from the taskFiles state
+      setTaskFiles(prevState => prevState.filter(file => file !== fileName));
+
+      toast({
+        title: "File deleted.",
+        description: "The file has been successfully deleted.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Failed to delete file.",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
+  };
+
+  const handleFileDownload = async (fileName: string) => {
+    try {
+      const blobClient = containerClient.getBlockBlobClient(fileName);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = await blobClient.url;
+      downloadLink.download = fileName;
+      downloadLink.click();
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Failed to download file.",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
+  };
+
   const COLORS = ["#99BC85", "#FF8080", "#F6FDC3", "#CDFAD5", "#E5E1DA"]; // Available colors
   
   return (
@@ -228,7 +278,13 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
               <Box>
                 <Heading size="md">Files</Heading>
                 {taskFiles.map((file, index) => (
-                  <Text key={index}>{file}</Text>
+                  <Flex key={index} alignItems="center">
+                    <Text flex="1">{file}</Text>
+                    <ButtonGroup>
+                      <Button onClick={() => handleFileDelete(file)}>Delete</Button>
+                      <Button onClick={() => handleFileDownload(file)}>Download</Button>
+                    </ButtonGroup>
+                  </Flex>
                 ))}
               </Box>
             </VStack>
@@ -274,49 +330,50 @@ type EditableColorSelectionProps = {
 
 function EditableColorSelection({ label, selectedColor, onSelect, colors }: EditableColorSelectionProps) {
   return (
-    <Box> <Heading size="md">{label}</Heading>
-    <Flex>
-      {colors.map((color) => (<ColorCircle key={color} m={10} color={color} selectedColor={selectedColor} onColorSelect={onSelect} />))}
-    </Flex>
-  </Box>
-);
+    <Box>
+      <Heading size="md">{label}</Heading>
+      <Flex>
+        {colors.map((color) => (<ColorCircle key={color} m={10} color={color} selectedColor={selectedColor} onColorSelect={onSelect} />))}
+      </Flex>
+    </Box>
+  );
 }
 
 type FileUploadProps = {
-label: string;
-selectedFile: File | null;
-onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  label: string;
+  selectedFile: File | null;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
 function FileUpload({ label, selectedFile, onChange }: FileUploadProps) {
-return (
-  <Box>
-    <Heading size="md">{label}</Heading>
-    <Input type="file" accept="image/*" id="file-upload" style={{ display: "none" }} onChange={onChange} />
-    <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
-      <Button as="span">UploadImage</Button>
-    </label>
-    {selectedFile && <Text mt={2}>Selected file: {selectedFile.name}</Text>}
-  </Box>
-);
+  return (
+    <Box>
+      <Heading size="md">{label}</Heading>
+      <Input type="file" accept="*/*" id="file-upload" style={{ display: "none" }} onChange={onChange} />
+      <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
+        <Button as="span">Upload File</Button>
+      </label>
+      {selectedFile && <Text mt={2}>Selected file: {selectedFile.name}</Text>}
+    </Box>
+  );
 }
 
 type TaskColumnSelectionProps = {
-value: string;
-onChange: (value: string) => void;
+  value: string;
+  onChange: (value: string) => void;
 };
 
 function TaskColumnSelection({ value, onChange }: TaskColumnSelectionProps) {
-return (
-  <RadioGroup onChange={onChange} value={value}>
-    <Stack direction="row">
-      <Radio value="1" colorScheme="gray">To do</Radio>
-      <Radio value="2" colorScheme="yellow">In progress</Radio>
-      <Radio value="3" colorScheme="blue">For review</Radio>
-      <Radio value="4" colorScheme="green">Completed</Radio>
-    </Stack>
-  </RadioGroup>
-);
+  return (
+    <RadioGroup onChange={onChange} value={value}>
+      <Stack direction="row">
+        <Radio value="1" colorScheme="gray">To do</Radio>
+        <Radio value="2" colorScheme="yellow">In progress</Radio>
+        <Radio value="3" colorScheme="blue">For review</Radio>
+        <Radio value="4" colorScheme="green">Completed</Radio>
+      </Stack>
+    </RadioGroup>
+  );
 }
 
 export default EditTaskDrawer;

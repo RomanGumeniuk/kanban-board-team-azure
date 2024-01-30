@@ -17,6 +17,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { BlobServiceClient } from '@azure/storage-blob';
 import { DeleteIcon, InfoIcon } from "@chakra-ui/icons";
 import { TaskModel } from "../../utils/models";
 import EditTaskDrawer from "./EditTaskDrawer";
@@ -35,8 +36,27 @@ function Task({ index, task, fetchTasks }: TaskProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const shouldShowDeleteIcon = useBreakpointValue({ base: true, md: false });
 
+  const account = import.meta.env.VITE_STORAGE_ACCOUNT;
+  const sasToken = import.meta.env.VITE_STORAGE_SAS;
+  const containerName = import.meta.env.VITE_STORAGE_CONTAINER;
+  const blobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net/?${sasToken}`);
+  const containerClient = blobServiceClient.getContainerClient(containerName);
+
+  const deleteTaskFiles = async () => {
+    for await (const blob of containerClient.listBlobsFlat()) {
+      if (blob.name.startsWith(task.id.toString())) {
+        const blobClient = containerClient.getBlockBlobClient(blob.name);
+        await blobClient.delete();
+      }
+    }
+  };
+
   const handleDeleteConfirm = async () => {
     try {
+      // Delete associated files first
+      await deleteTaskFiles();
+
+      // Then delete the task
       const response = await kanbanService.deleteTask(task.id.toString());
       if (response.status === 200) {
         toast({
