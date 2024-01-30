@@ -226,11 +226,12 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
         isClosable: true,
         position: "bottom",
       });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
       toast({
         title: "Failed to delete file.",
-        description: error.message,
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -244,8 +245,11 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
       const blobClient = containerClient.getBlockBlobClient(fileName);
       const downloadLink = document.createElement('a');
       downloadLink.href = await blobClient.url;
-      downloadLink.download = fileName;
-      downloadLink.click();
+      downloadLink.download = fileName.split('-').slice(2).join('-'); // This line is updated to remove the task id and timestamp from the file name
+      downloadLink.style.display = 'none'; // This line is added to prevent the link from being visible
+      document.body.appendChild(downloadLink); // This line is added to append the link to the body
+      downloadLink.click(); // This line triggers the download
+      document.body.removeChild(downloadLink); // This line removes the link from the body after triggering the download
     } catch (error) {
       console.error(error);
       toast({
