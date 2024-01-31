@@ -62,9 +62,15 @@ class KanbanService {
 
   updateTask(taskId: string, taskData: any) {
     const key = "zCtsI_EdhvXBw7rBWQLCzheaVG6habU1WhVX1ej-cfclAzFuyCan-g=="; // updateTask key
-    const endpoint = `EditTask?id=${taskId}&title=${taskData.title}&description=${taskData.description}&column=${taskData.column}&color=${taskData.color}`;
+    const endpoint = `EditTask?id=${taskId}&title=${taskData.title}&description=${taskData.description}&column=${taskData.column}&color=${encodeURIComponent(taskData.color)}`;
     return this.callFunction(endpoint, "POST", null, key);
   }
+  
+  LoginToSite(username: string, password:string){
+    const key = "1tiSr5AEQHl_B0InaeyNV27u-bmcv0CbYThzEgJRvsyPAzFuRuUWFg==";
+    return this.callFunction("Login","POST", { username, password }, key);
+  }
+  
 }
 
 export default new KanbanService();
