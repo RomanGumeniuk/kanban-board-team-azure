@@ -250,11 +250,15 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
       document.body.appendChild(downloadLink); // This line is added to append the link to the body
       downloadLink.click(); // This line triggers the download
       document.body.removeChild(downloadLink); // This line removes the link from the body after triggering the download
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
+      let errorMessage = 'An unknown error occurred';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       toast({
-        title: "Failed to download file.",
-        description: error.message,
+        title: "Failed to delete file.",
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
