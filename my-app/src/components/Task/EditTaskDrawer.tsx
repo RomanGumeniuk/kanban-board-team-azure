@@ -25,6 +25,7 @@ import {
   RadioGroup,
   Stack,
   Radio,
+  Textarea,
 } from "@chakra-ui/react";
 import { BlobServiceClient } from '@azure/storage-blob';
 import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
@@ -241,7 +242,7 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
   };
 
 
-  const drawerSize = useBreakpointValue({ base: "full", md: "xl" });
+  //const drawerSize = useBreakpointValue({ base: "full", md: "xl" });
   // const saveButtonSize = useBreakpointValue({base: })
 
   const handleFileDownload = async (fileName: string) => {
@@ -283,36 +284,11 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
           <Flex direction="column" align="center" justify="center">
             <VStack spacing={5} align="stretch" w="100%" maxW="85%">
               <EditableField label="Title" value={title} onChange={setTitle} />
-              <EditableColorSelection label="Color" selectedColor={selectedColor} onSelect={handleColorSelect} colors={COLORS} />
               <EditableField label="Description" value={description} onChange={setDescription} isTextarea />
+              <EditableColorSelection label="Color" selectedColor={selectedColor} onSelect={handleColorSelect} colors={COLORS} />
               <FileUpload label="Image" selectedFile={selectedFile} onChange={handleFileChange} />
               <TaskColumnSelection value={column} onChange={setColumn} />
               <Box>
-
-                <Heading size="md">Title</Heading>
-                <Input
-                  defaultValue={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  autoFocus
-                  variant={"filled"}
-                />
-              </Box>
-              <EditableColorSelection
-                label="Color"
-                selectedColor={selectedColor}
-                onSelect={handleColorSelect}
-                colors={COLORS}
-              />
-              <Box>
-                <Heading size="md">Description</Heading>
-                <Textarea
-                  defaultValue={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  minHeight="150px"
-                  maxHeight="600px"
-                  variant={"filled"}
-                />
-
                 <Heading size="md">Files</Heading>
                 {taskFiles.map((file, index) => (
                   <Flex key={index} alignItems="center">
@@ -323,13 +299,11 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
                     </ButtonGroup>
                   </Flex>
                 ))}
-
               </Box>
             </VStack>
           </Flex>
         </DrawerBody>
         <DrawerFooter>
-
           <Button variant="outline" mr={5} onClick={onClose}>
             Cancel
           </Button>
@@ -342,7 +316,6 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
           >
             Save
           </Button>
-
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
