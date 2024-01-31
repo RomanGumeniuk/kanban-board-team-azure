@@ -17,7 +17,6 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { BlobServiceClient } from '@azure/storage-blob';
 import { DeleteIcon, InfoIcon } from "@chakra-ui/icons";
 import { TaskModel } from "../../utils/models";
 import EditTaskDrawer from "./EditTaskDrawer";
@@ -35,30 +34,9 @@ function Task({ index, task, fetchTasks }: TaskProps) {
   const toast = useToast();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const shouldShowDeleteIcon = useBreakpointValue({ base: true, md: false });
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const account = import.meta.env.VITE_STORAGE_ACCOUNT;
-  const sasToken = import.meta.env.VITE_STORAGE_SAS;
-  const containerName = import.meta.env.VITE_STORAGE_CONTAINER;
-  const blobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net/?${sasToken}`);
-  const containerClient = blobServiceClient.getContainerClient(containerName);
-
-  const deleteTaskFiles = async () => {
-    for await (const blob of containerClient.listBlobsFlat()) {
-      if (blob.name.startsWith(task.id.toString())) {
-        const blobClient = containerClient.getBlockBlobClient(blob.name);
-        await blobClient.delete();
-      }
-    }
-  };
 
   const handleDeleteConfirm = async () => {
-    setIsDeleting(true);
     try {
-      // Delete associated files first
-      await deleteTaskFiles();
-
-      // Then delete the task
       const response = await kanbanService.deleteTask(task.id.toString());
       if (response.status === 200) {
         toast({
@@ -83,27 +61,15 @@ function Task({ index, task, fetchTasks }: TaskProps) {
         position: "bottom",
       });
     }
-    setIsDeleting(false);
     onClose();
   };
 
-  const formatDate = (dateString: string, isCreatedAt: boolean): string => {
-    let date = new Date(dateString);
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
     const now = new Date();
 
     if (isNaN(date.getTime())) {
       return "Invalid date";
-    }
-
-    // Helper function to adjust time for created_at
-    const adjustTimeForCreatedAt = (date: Date) => {
-      const timezoneOffsetInHours = new Date().getTimezoneOffset() / 60;
-      date.setHours(date.getHours() - timezoneOffsetInHours);
-      return date;
-    };
-
-    if (isCreatedAt) {
-      date = adjustTimeForCreatedAt(date);
     }
 
     const oneDay = 24 * 60 * 60 * 1000; // milliseconds in one day
@@ -127,13 +93,10 @@ function Task({ index, task, fetchTasks }: TaskProps) {
     } else if (isYesterday) {
       formatString = `'Yesterday', HH:mm`;
     } else if (differenceInDays <= 7) {
-      // Within the last week: Show day of the week and time
       formatString = "EEEE, HH:mm";
     } else if (isSameYear) {
-      // More than a week ago, but within the same year: Show day, month and time
       formatString = "do MMMM, HH:mm";
     } else {
-      // Different year: Show day, month and year
       formatString = "do MMMM yyyy, HH:mm";
     }
 
@@ -189,11 +152,8 @@ function Task({ index, task, fetchTasks }: TaskProps) {
       <Tooltip
         label={
           <Box>
-            <Text mb={2}>{`Created: ${formatDate(
-              task.created_at,
-              true
-            )}`}</Text>
-            <Text>{`Updated: ${formatDate(task.updated_at, false)}`}</Text>
+            <Text mb={2}>{`Created: ${formatDate(task.created_at)}`}</Text>
+            <Text>{`Updated: ${formatDate(task.updated_at)}`}</Text>
           </Box>
         }
         placement="top"
@@ -242,7 +202,7 @@ function Task({ index, task, fetchTasks }: TaskProps) {
               colorScheme="blue"
               onClick={handleDeleteConfirm}
               mr={3}
-              isLoading={isDeleting}
+              isLoading={false}
             >
               Confirm
             </Button>
