@@ -35,6 +35,7 @@ function Task({ index, task, fetchTasks }: TaskProps) {
   const toast = useToast();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const shouldShowDeleteIcon = useBreakpointValue({ base: true, md: false });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const account = import.meta.env.VITE_STORAGE_ACCOUNT;
   const sasToken = import.meta.env.VITE_STORAGE_SAS;
@@ -52,6 +53,7 @@ function Task({ index, task, fetchTasks }: TaskProps) {
   };
 
   const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
     try {
       // Delete associated files first
       await deleteTaskFiles();
@@ -81,15 +83,27 @@ function Task({ index, task, fetchTasks }: TaskProps) {
         position: "bottom",
       });
     }
+    setIsDeleting(false);
     onClose();
   };
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
+  const formatDate = (dateString: string, isCreatedAt: boolean): string => {
+    let date = new Date(dateString);
     const now = new Date();
 
     if (isNaN(date.getTime())) {
       return "Invalid date";
+    }
+
+    // Helper function to adjust time for created_at
+    const adjustTimeForCreatedAt = (date: Date) => {
+      const timezoneOffsetInHours = new Date().getTimezoneOffset() / 60;
+      date.setHours(date.getHours() - timezoneOffsetInHours);
+      return date;
+    };
+
+    if (isCreatedAt) {
+      date = adjustTimeForCreatedAt(date);
     }
 
     const oneDay = 24 * 60 * 60 * 1000; // milliseconds in one day
@@ -175,8 +189,11 @@ function Task({ index, task, fetchTasks }: TaskProps) {
       <Tooltip
         label={
           <Box>
-            <Text mb={2}>{`Created: ${formatDate(task.created_at)}`}</Text>
-            <Text>{`Updated: ${formatDate(task.updated_at)}`}</Text>
+            <Text mb={2}>{`Created: ${formatDate(
+              task.created_at,
+              true
+            )}`}</Text>
+            <Text>{`Updated: ${formatDate(task.updated_at, false)}`}</Text>
           </Box>
         }
         placement="top"
@@ -225,7 +242,7 @@ function Task({ index, task, fetchTasks }: TaskProps) {
               colorScheme="blue"
               onClick={handleDeleteConfirm}
               mr={3}
-              isLoading={false}
+              isLoading={isDeleting}
             >
               Confirm
             </Button>
