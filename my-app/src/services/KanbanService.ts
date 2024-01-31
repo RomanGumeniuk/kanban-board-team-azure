@@ -62,9 +62,10 @@ class KanbanService {
 
   updateTask(taskId: string, taskData: any) {
     const key = "zCtsI_EdhvXBw7rBWQLCzheaVG6habU1WhVX1ej-cfclAzFuyCan-g=="; // updateTask key
-    const endpoint = `EditTask?id=${taskId}&title=${taskData.title}&description=${taskData.description}&column=${taskData.column}&color=${taskData.color}`;
+    const color = encodeURIComponent(taskData.color); // Encode the color value
+    const endpoint = `EditTask?id=${taskId}&title=${taskData.title}&description=${taskData.description}&column=${taskData.column}&color=${color}`;
     return this.callFunction(endpoint, "POST", null, key);
-  }
+}
 }
 
 export default new KanbanService();
