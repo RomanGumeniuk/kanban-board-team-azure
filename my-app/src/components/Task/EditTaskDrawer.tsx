@@ -25,14 +25,12 @@ import {
   RadioGroup,
   Stack,
   Radio,
-  Textarea,
 } from "@chakra-ui/react";
 import { BlobServiceClient } from '@azure/storage-blob';
 import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
 import { TaskModel } from "../../utils/models";
 import ColorCircle from "./ColorCircle";
 import kanbanService from "../../services/KanbanService";
-
 const EditableControls = () => {
   const {
     isEditing,
@@ -40,7 +38,6 @@ const EditableControls = () => {
     getCancelButtonProps,
     getEditButtonProps,
   } = useEditableControls();
-
   return isEditing ? (
     <ButtonGroup justifyContent="center" size="sm">
       <IconButton
@@ -63,14 +60,12 @@ const EditableControls = () => {
     />
   );
 };
-
 type TaskDrawerProps = {
   isOpen: boolean;
   onClose: () => void;
   task: TaskModel;
   fetchTasks: () => void;
 };
-
 const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
   isOpen,
   onClose,
@@ -87,7 +82,6 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(task.imageUrl ? task.imageUrl : null);
   const [taskFiles, setTaskFiles] = useState<string[]>([]);
-
   const account = import.meta.env.VITE_STORAGE_ACCOUNT;
   const sasToken = import.meta.env.VITE_STORAGE_SAS;
   const containerName = import.meta.env.VITE_STORAGE_CONTAINER;
@@ -102,9 +96,9 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
     setColumn(task.column.toString());
     setImageUrl(task.imageUrl ? task.imageUrl : null);
   }, [task]);
-
   // Fetch the list of blobs (files) for the task when the drawer opens
-  useEffect(() => {
+useEffect(() => {
+  if (isOpen) {
     const fetchTaskFiles = async () => {
       let blobs = [];
       for await (const blob of containerClient.listBlobsFlat()) {
@@ -114,25 +108,25 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
       }
       setTaskFiles(blobs);
     };
-
-    if (isOpen) {
-      fetchTaskFiles();
-    }
-  }, [isOpen, task.id, containerClient]);
-
+    fetchTaskFiles();
+  }
+}, [isOpen]); // Only re-run the effect if isOpen changes
   const handleColorSelect = useCallback((color: string) => {
     setSelectedColor(color);
   }, []);
-
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
-
+    }
+  };
+  
+  const uploadFile = async () => {
+    if (selectedFile) {
       try {
-        const blobName = `${task.id}-${new Date().getTime()}-${file.name}`;
+        const blobName = `${task.id}-${new Date().getTime()}-${selectedFile.name}`;
         const blobClient = containerClient.getBlockBlobClient(blobName);
-        await blobClient.uploadData(file, { blobHTTPHeaders: { blobContentType: file.type } });
+        await blobClient.uploadData(selectedFile, { blobHTTPHeaders: { blobContentType: selectedFile.type } });
         const url = `https://${account}.blob.core.windows.net/${containerName}/${blobName}`;
         setImageUrl(url);
         
@@ -142,7 +136,7 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
           imageUrl: url,
         };
         await kanbanService.updateTask(task.id.toString(), updatedTask);
-
+  
         toast({
           title: "Image has been uploaded successfully!",
           status: "success",
@@ -163,11 +157,24 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
       }
     }
   };
-
-  const handleSaveConfirm = async () => {
+  
+  const handleSaveConfirm =async () => {
     // Prevent saving if color is not selected
-    if (!selectedColor || selectedColor === "gray") { toast({ title: "Color Selection", description: "Please select a color before updating the task.", status: "warning", duration :5000, isClosable: true, position: "bottom", }); return; }
+    if (!selectedColor || selectedColor === "gray") { 
+      toast({ 
+        title: "Color Selection", 
+        description: "Please select a color before updating the task.", 
+        status: "warning", 
+        duration :5000, 
+        isClosable: true, 
+        position: "bottom", 
+      }); 
+      return; 
+    }
     setIsLoading(true);
+  
+    // Upload file before saving task
+    await uploadFile();
     const updatedTask = {
       ...task,
       title,
@@ -210,15 +217,12 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
       setIsLoading(false);
     }
   };
-
   const handleFileDelete = async (fileName: string) => {
     try {
       const blobClient = containerClient.getBlockBlobClient(fileName);
       await blobClient.delete();
-
       // Remove the file from the taskFiles state
       setTaskFiles(prevState => prevState.filter(file => file !== fileName));
-
       toast({
         title: "File deleted.",
         description: "The file has been successfully deleted.",
@@ -240,11 +244,6 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
       });
     }
   };
-
-
-  //const drawerSize = useBreakpointValue({ base: "full", md: "xl" });
-  // const saveButtonSize = useBreakpointValue({base: })
-
   const handleFileDownload = async (fileName: string) => {
     try {
       const blobClient = containerClient.getBlockBlobClient(fileName);
@@ -271,7 +270,6 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
       });
     }
   };
-
   const COLORS = ["#99BC85", "#FF8080", "#F6FDC3", "#CDFAD5", "#E5E1DA"]; // Available colors
   
   return (
@@ -282,7 +280,8 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
         <DrawerHeader>Edit Task: {task.title}<br />ID: {task.id}</DrawerHeader>
         <DrawerBody>
           <Flex direction="column" align="center" justify="center">
-            <VStack spacing={5} align="stretch" w="100%" maxW="85%">
+            <VStack spacing={5} align="stretch" w="
+100%" maxW="85%">
               <EditableField label="Title" value={title} onChange={setTitle} />
               <EditableField label="Description" value={description} onChange={setDescription} isTextarea />
               <EditableColorSelection label="Color" selectedColor={selectedColor} onSelect={handleColorSelect} colors={COLORS} />
@@ -321,14 +320,12 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
     </Drawer>
   );
 };
-
 type EditableFieldProps = {
   label: string;
   value: string;
   onChange: (value: string) => void;
   isTextarea?: boolean;
 };
-
 function EditableField({ label, value, onChange, isTextarea = false }: EditableFieldProps) {
   return (
     <Box>
@@ -343,14 +340,12 @@ function EditableField({ label, value, onChange, isTextarea = false }: EditableF
     </Box>
   );
 }
-
 type EditableColorSelectionProps = {
   label: string;
   selectedColor: string;
   onSelect: (color: string) => void;
   colors: string[];
 };
-
 function EditableColorSelection({ label, selectedColor, onSelect, colors }: EditableColorSelectionProps) {
   return (
     <Box>
@@ -361,13 +356,11 @@ function EditableColorSelection({ label, selectedColor, onSelect, colors }: Edit
     </Box>
   );
 }
-
 type FileUploadProps = {
   label: string;
   selectedFile: File | null;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 };
-
 function FileUpload({ label, selectedFile, onChange }: FileUploadProps) {
   return (
     <Box>
@@ -380,12 +373,10 @@ function FileUpload({ label, selectedFile, onChange }: FileUploadProps) {
     </Box>
   );
 }
-
 type TaskColumnSelectionProps = {
   value: string;
   onChange: (value: string) => void;
 };
-
 function TaskColumnSelection({ value, onChange }: TaskColumnSelectionProps) {
   return (
     <RadioGroup onChange={onChange} value={value}>
@@ -398,5 +389,4 @@ function TaskColumnSelection({ value, onChange }: TaskColumnSelectionProps) {
     </RadioGroup>
   );
 }
-
 export default EditTaskDrawer;
