@@ -1,5 +1,5 @@
 import { AddIcon } from "@chakra-ui/icons";
-import mockData from "../../data/mockData.json";
+import { motion } from "framer-motion";
 import {
   Badge,
   Box,
@@ -7,31 +7,18 @@ import {
   IconButton,
   Stack,
   useColorModeValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Input,
-  ButtonGroup,
-  Button,
   useBreakpointValue,
   StackDirection,
-  HStack,
-  VStack,
-  Radio,
-  RadioGroup, // import the HStack component
+  Skeleton,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { ColumnType } from "../../utils/enums";
 import Task from "../Task/Task";
 import { TaskModel } from "../../utils/models";
-import React from "react";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
+import AddTaskModal from "./AddTaskModal";
+import { useMemo, useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const ColumnColorScheme: Record<ColumnType, string> = {
   TO_DO: "gray",
@@ -40,42 +27,86 @@ const ColumnColorScheme: Record<ColumnType, string> = {
   COMPLETED: "green",
 };
 
-function Column({ column }: { column: ColumnType }) {
-  const [value, setValue] = React.useState("1");
+function Column({
+  column,
+  tasks,
+  isLoading,
+  fetchTasks,
+}: {
+  column: ColumnType;
+  tasks: TaskModel[];
+  isLoading: boolean;
+  fetchTasks: () => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
-  const initialRef = React.useRef<HTMLInputElement | null>(null);
+  const simpleBarColor = useColorModeValue("lightColor", "darkColor");
 
   const stackDirection = useBreakpointValue({
     base: "row",
     md: "column",
   }) as StackDirection;
 
-  const ColumnTasks = mockData.tasks
-    .filter((task) => task.column === column)
-    .map((task, index) => {
-      let column: ColumnType;
-      switch (task.column) {
-        case "TO_DO":
-          column = ColumnType.TO_DO;
-          break;
-        case "IN_PROGRESS":
-          column = ColumnType.IN_PROGRESS;
-          break;
-        case "FOR_REVIEW":
-          column = ColumnType.FOR_REVIEW;
-          break;
-        case "COMPLETED":
-          column = ColumnType.COMPLETED;
-          break;
-        default:
-          throw new Error(`Invalid column type: ${task.column}`);
-      }
+  const taskVariants = {
+    hidden: { scale: 0.3, opacity: 0, y: 30, rotate: 1 },
+    visible: { scale: 1, opacity: 1, y: 0, rotate: 0 },
+  };
 
-      const mappedTask: TaskModel = { ...task, column };
+  const stackHeight = useBreakpointValue({
+    base: "100%",
+    md: 570,
+  });
 
-      return <Task key={mappedTask.id} task={mappedTask} index={index} />;
-    });
+  function mapColumnNumberToColumnType(columnNumber: number): ColumnType {
+    switch (columnNumber) {
+      case 1:
+        return ColumnType.TO_DO;
+      case 2:
+        return ColumnType.IN_PROGRESS;
+      case 3:
+        return ColumnType.FOR_REVIEW;
+      case 4:
+        return ColumnType.COMPLETED;
+      default:
+        throw new Error(`Invalid column number: ${columnNumber}`);
+    }
+  }
+
+  const ColumnTasks = useMemo(() => {
+    if (isLoading) {
+      return Array(5)
+        .fill(null)
+        .map((_, index) => (
+          <Skeleton
+            key={index}
+            startColor="gray.400"
+            endColor="gray.300"
+            height="20px"
+            borderRadius="md"
+          />
+        ));
+    } else {
+      return tasks
+        .filter((task) => mapColumnNumberToColumnType(task.column) === column)
+        .map((task, index) => (
+          <Skeleton isLoaded={!isLoading} fadeDuration={0.5} key={task.id}>
+            <motion.div
+              key={task.id}
+              variants={taskVariants}
+              initial="hidden"
+              animate="visible"
+              transition={{
+                ease: "easeOut",
+                duration: 0.2,
+                delay: 0.1 * index,
+              }}
+            >
+              <Task task={task} index={index} fetchTasks={fetchTasks} />
+            </motion.div>
+          </Skeleton>
+        ));
+    }
+  }, [isLoading, tasks, column, fetchTasks]);
 
   function formatColumnType(columnType: ColumnType) {
     switch (columnType) {
@@ -124,72 +155,32 @@ function Column({ column }: { column: ColumnType }) {
         overflow="hidden" // hide overflow to respect border radius
         bgColor={useColorModeValue("gray.200", "gray.700")}
       >
-        <SimpleBar style={{ maxHeight: 600 }}>
-          <Stack
-            direction={stackDirection}
-            p={4}
-            spacing={4}
-            alignItems={"center"}
-          >
-            {ColumnTasks}
-          </Stack>
+        <SimpleBar
+          style={{
+            height: stackHeight,
+            scrollbarColor: `${simpleBarColor} transparent`,
+          }}
+        >
+          {isLoading ? (
+            <Skeleton startColor="gray.600" endColor="gra.100" height="600px" />
+          ) : (
+            <Stack
+              direction={stackDirection}
+              p={4}
+              spacing={4}
+              alignItems={"center"}
+            >
+              {ColumnTasks}
+            </Stack>
+          )}
         </SimpleBar>
       </Box>
-      {/* ... existing code ... */}
-      <Modal
-        initialFocusRef={initialRef}
+      <AddTaskModal
         isOpen={isOpen}
         onClose={onClose}
-        size="xl"
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Add new task</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl>
-              <FormLabel>Title</FormLabel>
-              <Input placeholder="Title" ref={initialRef} />
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Description</FormLabel>
-              <Input placeholder="Description" />
-            </FormControl>
-          </ModalBody>
-
-          <VStack alignItems="center">
-            <RadioGroup onChange={setValue} value={value}>
-              <Stack direction="row">
-                <Radio value="1" colorScheme="blue">
-                  To do
-                </Radio>
-                <Radio value="2" colorScheme="yellow">
-                  For review
-                </Radio>
-                <Radio value="3" colorScheme="purple">
-                  In progress
-                </Radio>
-                <Radio value="4" colorScheme="green">
-                  Completed
-                </Radio>
-              </Stack>
-            </RadioGroup>
-          </VStack>
-
-          <Button
-            w={"60%"}
-            mt={4}
-            alignSelf={"center"}
-            colorScheme="blue"
-            onClick={onClose}
-            variant={"solid"}
-            mb={0.5}
-          >
-            Save
-          </Button>
-        </ModalContent>
-      </Modal>
+        onTaskAdded={fetchTasks}
+        column={column}
+      />
     </Box>
   );
 }
