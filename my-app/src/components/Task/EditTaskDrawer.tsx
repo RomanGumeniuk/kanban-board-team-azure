@@ -240,6 +240,10 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
     }
   };
 
+
+  const drawerSize = useBreakpointValue({ base: "full", md: "xl" });
+  // const saveButtonSize = useBreakpointValue({base: })
+
   const handleFileDownload = async (fileName: string) => {
     try {
       const blobClient = containerClient.getBlockBlobClient(fileName);
@@ -284,6 +288,31 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
               <FileUpload label="Image" selectedFile={selectedFile} onChange={handleFileChange} />
               <TaskColumnSelection value={column} onChange={setColumn} />
               <Box>
+
+                <Heading size="md">Title</Heading>
+                <Input
+                  defaultValue={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  autoFocus
+                  variant={"filled"}
+                />
+              </Box>
+              <EditableColorSelection
+                label="Color"
+                selectedColor={selectedColor}
+                onSelect={handleColorSelect}
+                colors={COLORS}
+              />
+              <Box>
+                <Heading size="md">Description</Heading>
+                <Textarea
+                  defaultValue={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  minHeight="150px"
+                  maxHeight="600px"
+                  variant={"filled"}
+                />
+
                 <Heading size="md">Files</Heading>
                 {taskFiles.map((file, index) => (
                   <Flex key={index} alignItems="center">
@@ -294,13 +323,26 @@ const EditTaskDrawer: React.FC<TaskDrawerProps> = ({
                     </ButtonGroup>
                   </Flex>
                 ))}
+
               </Box>
             </VStack>
           </Flex>
         </DrawerBody>
         <DrawerFooter>
-          <Button variant="outline" mr={3} onClick={onClose}>Cancel</Button>
-          <Button colorScheme="blue" isLoading={isLoading} onClick={handleSaveConfirm}>Save</Button>
+
+          <Button variant="outline" mr={5} onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            colorScheme="blue"
+            isLoading={isLoading}
+            onClick={handleSaveConfirm}
+            w={"25%"}
+            mr={40}
+          >
+            Save
+          </Button>
+
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
