@@ -75,7 +75,7 @@ Start the server
 
 ## Screenshots
 
-![App Screenshot]([https://via.placeholder.com/468x300?text=App+Screenshot+Here](https://github.com/zsl-hub/kanban-board-team-azure/blob/main/Opera%20Snapshot_2024-02-01_132105_localhost.png)https://github.com/zsl-hub/kanban-board-team-azure/blob/main/Opera%20Snapshot_2024-02-01_132105_localhost.png)
+![App Screenshot](https://github.com/zsl-hub/kanban-board-team-azure/blob/main/Opera%20Snapshot_2024-02-01_132105_localhost.png)
 
 
 ## License
