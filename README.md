@@ -42,33 +42,23 @@ Start the server
 ```
 
 
+
 ## Roadmap
 
+- added ability to add multimedia with display
+- users added
+- custom URL configured
+- dark mode added
+- bresponsive design added
+- bconnected the application to Azure functions
+- bthe application was transferred to the cloud
+- connection of the application with the database
+- added sticky notes to the website
+- added Chakra UI
 - entire page layout added
 
-- added Chakra UI
 
-- added sticky notes to the website
 
-- connection of the application with the database
-
-- the application was transfered to the cloud
-
-- connected the application to Azure functions
-
-- added responsive design
-
-- dark mode added
-
-- custom URL configured 
-
-- users added
-
-- added ability to add multimedia with display
-
--
-
--
 
 
 
