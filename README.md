@@ -1,11 +1,8 @@
-
 ![Logo](https://github.com/zsl-hub/kanban-board-team-azure/blob/main/e7935cfe-bea7-11ee-8b2b-022281ae900b.png)
-
 
 # Karpboard
 
 A Karpboard is a kanbanboard static web app.
-
 
 ## Authors
 
@@ -13,7 +10,6 @@ A Karpboard is a kanbanboard static web app.
 - [@JakubWisla-WTT](https://github.com/JakubWisla-WTT)
 - [@piotrkaczmarek123](https://github.com/piotrkaczmarek123)
 - [@sassythesasquach](https://github.com/sassythesasquach)
-
 
 ## Run Locally
 
@@ -41,8 +37,6 @@ Start the server
   npm run dev
 ```
 
-
-
 ## Roadmap
 
 - added ability to add multimedia with display
@@ -57,18 +51,10 @@ Start the server
 - added Chakra UI
 - entire page layout added
 
-
-
-
-
-
-
 ## Screenshots
 
-![App Screenshot](https://github.com/zsl-hub/kanban-board-team-azure/blob/main/Opera%20Snapshot_2024-02-01_132105_localhost.png)
-
+![App Screenshot](https://github.com/zsl-hub/kanban-board-team-azure/blob/main/kanban_board-photo.png)
 
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
-
