@@ -49,9 +49,9 @@ Start the server
 - users added
 - custom URL configured
 - dark mode added
-- bresponsive design added
-- bconnected the application to Azure functions
-- bthe application was transferred to the cloud
+- responsive design added
+- connected the application to Azure functions
+- the application was transferred to the cloud
 - connection of the application with the database
 - added sticky notes to the website
 - added Chakra UI
